@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tns="http://www.ups.com/WSDL/XOLTWS/Rate/v1.1" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1" xmlns:error="http://www.ups.com/XMLSchema/XOLTWS/Error/v1.1" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="RateWS" targetNamespace="http://www.ups.com/WSDL/XOLTWS/Rate/v1.1" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema>
+      <xsd:import schemaLocation="UPSSecurity.xsd" namespace="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" />
+      <xsd:import schemaLocation="Error1.1.xsd" namespace="http://www.ups.com/XMLSchema/XOLTWS/Error/v1.1" />
+      <xsd:import schemaLocation="RateWebServiceSchema.xsd" namespace="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="RateRequestMessage">
+    <wsdl:part name="Body" element="rate:RateRequest" />
+    <wsdl:part name="UPSSecurity" element="upss:UPSSecurity" />
+  </wsdl:message>
+  <wsdl:message name="RateResponseMessage">
+    <wsdl:part name="Body" element="rate:RateResponse" />
+  </wsdl:message>
+  <wsdl:message name="RateErrorMessage">
+    <wsdl:part name="RateError" element="error:Errors" />
+  </wsdl:message>
+  <wsdl:portType name="RatePortType">
+    <wsdl:operation name="ProcessRate">
+      <wsdl:input name="RateRequest" message="tns:RateRequestMessage" />
+      <wsdl:output name="RateResponse" message="tns:RateResponseMessage" />
+      <wsdl:fault name="RateError" message="tns:RateErrorMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="RateBinding" type="tns:RatePortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ProcessRate">
+      <soap:operation soapAction="http://onlinetools.ups.com/webservices/RateBinding/v1.1" style="document" />
+      <wsdl:input name="RateRequest">
+        <soap:body use="literal" parts="Body" />
+        <soap:header message="tns:RateRequestMessage" part="UPSSecurity" use="literal">
+          <soap:headerfault message="tns:RateErrorMessage" part="RateError" use="literal" />
+        </soap:header>
+      </wsdl:input>
+      <wsdl:output name="RateResponse">
+        <soap:body use="literal" parts="Body" />
+      </wsdl:output>
+      <wsdl:fault name="RateError">
+        <soap:fault use="literal" name="RateError" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="RateService">
+    <wsdl:port name="RatePort" binding="tns:RateBinding">
+      <soap:address location="https://wwwcie.ups.com/webservices/Rate" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

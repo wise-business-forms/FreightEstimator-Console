@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="FreightEstApp35.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="FreightEstApp35_UpsAddressValidationWebReference_XAVService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://wwwcie.ups.com/webservices/XAV</Value>
+    </Setting>
+    <Setting Name="FreightEstApp35_UpsRateWebReference_RateService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://wwwcie.ups.com/webservices/Rate</Value>
+    </Setting>
+    <Setting Name="FreightEstApp35_FreightRateWebReference_FreightRateService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://wwwcie.ups.com/webservices/FreightRate</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

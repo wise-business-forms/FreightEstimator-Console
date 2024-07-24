@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreightEstApp35", "FreightEstApp35\FreightEstApp35.csproj", "{A0344F90-8F48-482D-8EAD-D352B2291B3A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A0344F90-8F48-482D-8EAD-D352B2291B3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0344F90-8F48-482D-8EAD-D352B2291B3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0344F90-8F48-482D-8EAD-D352B2291B3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0344F90-8F48-482D-8EAD-D352B2291B3A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
