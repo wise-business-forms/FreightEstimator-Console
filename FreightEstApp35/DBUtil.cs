@@ -22,8 +22,8 @@ namespace FreightEstApp35
             //SqlCommand cmd = new SqlCommand("getNextRequestFromQueue", conn);
             //cmd.CommandType = CommandType.StoredProcedure;
 
-            //string sqlTempFix = "UPDATE " + Config.RemoteServerName + ".CostPlus.dbo.FreightRequests SET FromCity = 'Fort Wayne' WHERE FromCity = 'Ft Wayne'";
-            string sqlTempFix = "UPDATE UPSRATE.dbo.FreightRequests_" + Config.RemoteServerName + " SET FromCity = 'Fort Wayne' WHERE FromCity = 'Ft Wayne'";
+            string sqlTempFix = "UPDATE " + Config.RemoteServerName + ".CostPlus.dbo.FreightRequests SET FromCity = 'Fort Wayne' WHERE FromCity = 'Ft Wayne'";
+            //string sqlTempFix = "UPDATE UPSRATE.dbo.FreightRequests_" + Config.RemoteServerName + " SET FromCity = 'Fort Wayne' WHERE FromCity = 'Ft Wayne'";
 
             SqlCommand cmdTempFix = new SqlCommand(sqlTempFix, conn);
             cmdTempFix.CommandType = CommandType.Text;
@@ -39,8 +39,8 @@ namespace FreightEstApp35
             sql += "PickupDate, NotifyBeforeDelivery, LiftgatePickup, LiftgateDelivery, LimitedAccessPickup, LimitedAccessDelivery, ";
             sql += "ResidentialPickup, ResidentialDelivery, InsidePickup, InsideDelivery, SortAndSegregate, StopoffCharge, DateRequested, ";
 			sql += "DateProcessed, AcctNumber, ShipWithArray ";
-            //sql += "FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightRequests ";
-            sql += "FROM UPSRATE.dbo.FreightRequests_" + Config.RemoteServerName + " ";
+            sql += "FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightRequests ";
+            //sql += "FROM UPSRATE.dbo.FreightRequests_" + Config.RemoteServerName + " ";
 
 
             sql += "WHERE (DateProcessed IS NULL OR DateRated IS NULL) ";//and loginid ='smacphail' ";
@@ -112,8 +112,8 @@ namespace FreightEstApp35
         {
             //WiseTools.logToFile(Config.logFile, "Starting saveResults", true);
             SqlConnection conn = new SqlConnection(connString);
-            
-            string sql = "UPDATE UPSRATE.dbo.FreightRequests_" + Config.RemoteServerName + " SET Carrier01 = @Carrier01, Service01 = @Service01, ServiceCode01 = @ServiceCode01, Rate01 = @Rate01, Note01 = @Note01, ";
+            string sql = "UPDATE  " + Config.RemoteServerName + ".CostPlus.dbo.FreightRequests SET Carrier01 = @Carrier01, Service01 = @Service01, ServiceCode01 = @ServiceCode01, Rate01 = @Rate01, Note01 = @Note01, ";
+            //string sql = "UPDATE UPSRATE.dbo.FreightRequests_" + Config.RemoteServerName + " SET Carrier01 = @Carrier01, Service01 = @Service01, ServiceCode01 = @ServiceCode01, Rate01 = @Rate01, Note01 = @Note01, ";
             sql += "Carrier02 = @Carrier02, Service02 = @Service02, ServiceCode02 = @ServiceCode02, Rate02 = @Rate02, Note02 = @Note02, ";
             sql += "Carrier03 = @Carrier03, Service03 = @Service03, ServiceCode03 = @ServiceCode03, Rate03 = @Rate03, Note03 = @Note03, ";
             sql += "Carrier04 = @Carrier04, Service04 = @Service04, ServiceCode04 = @ServiceCode04, Rate04 = @Rate04, Note04 = @Note04, ";
@@ -207,8 +207,8 @@ namespace FreightEstApp35
         internal void saveErrorMessage(string source, string uniqueId, string errorCode, string errorMessage)
         {
             SqlConnection conn = new SqlConnection(connString);
-            //string sql = "UPDATE " + Config.RemoteServerName + ".CostPlus.dbo.FreightRequests SET ErrorCode01 = @ErrorCode01, ErrorDesc01 = @ErrorDesc01, ";
-            string sql = "UPDATE UPSRATE.dbo.FreightRequests_" + Config.RemoteServerName + " SET ErrorCode01 = @ErrorCode01, ErrorDesc01 = @ErrorDesc01, ";
+            string sql = "UPDATE " + Config.RemoteServerName + ".CostPlus.dbo.FreightRequests SET ErrorCode01 = @ErrorCode01, ErrorDesc01 = @ErrorDesc01, ";
+            //string sql = "UPDATE UPSRATE.dbo.FreightRequests_" + Config.RemoteServerName + " SET ErrorCode01 = @ErrorCode01, ErrorDesc01 = @ErrorDesc01, ";
             sql += "ErrorCode02 = NULL, ErrorDesc02 = NULL, ";
             sql += "ErrorCode03 = NULL, ErrorDesc03 = NULL, ";
             sql += "DateProcessed = GETDATE(), DateRated = GETDATE() ";

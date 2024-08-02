@@ -17,6 +17,24 @@ namespace FreightEstApp35
         static string _UPSAccessKey = "CC83ED82D080DC80";
         static string _UPSUserName = "WiseWebSupport";
         static string _UPSPassword = "Wise_forms";
+        static string _UPSClientId = "SzWbVRiGAPPbC0NqV9GGXdE8kUE0EnexGrxsl94sj0HGTdAX";
+        static string _UPSClientSecret = "zcnbBCf3qPGLleJv1aBqOH8SbAbFssLoE1vAAUGbrnXK2GJAQJUTAskarDv70Ddw";
+        static string _UPSAuthorizationURL = "https://onlinetools.ups.com/security/v1/oauth/authorize"; // PRODUCTION
+        static string _UPSGenerateTokenURL = "https://onlinetools.ups.com/security/v1/oauth/token"; // PRODUCTION
+                                                                                                    //static string _UPSShopRatesURL = "https://onlinetools.ups.com/rating/v2403/"; // PRODUCTION {version}/{requestoption}
+                                                                                                    //static string _UPSAddressValidationURL = "https://onlinetools.ups.com/api/addressvalidation/v1/3"; //  PRODUCTION  {version}/{requestOption}
+
+        static string _UPSShipFromName = "Wise Alpharetta";
+        static string _UPSShipFromAddress = "1000 Union Center Drive";
+        static string _UPSShipFromCity = "Alpharetta";
+        static string _UPSShipFromState = "GA";
+        static string _UPSShipFromZip = "30004";
+
+        // UPS TEST ENDPOINTS
+        //static string _UPSAuthorizationURL = "https://wwwcie.ups.com/security/v1/oauth/authorize"; // TEST
+        //static string _UPSGenerateTokenURL = "https://wwwcie.ups.com/security/v1/oauth/token"; // TEST
+        static string _UPSAddressValidationURL = "https://wwwcie.ups.com/api/addressvalidation/v1/3"; // TEST  {version}/{requestOption}
+        static string _UPSShopRatesURL = "https://wwwcie.ups.com/api/rating/v2403/"; // TEST {version}/{requestoption}
 
         static string _ShipFromShipperNumber = "391287";
 
@@ -70,6 +88,7 @@ namespace FreightEstApp35
         {
             get { return _RemoteServerName; }
         }
+        // UPS 
         public static string UPSAccessKey
         {
             get { return _UPSAccessKey; }
@@ -86,6 +105,52 @@ namespace FreightEstApp35
         {
             get { return _ShipFromShipperNumber; }
         }
+        public static string UPSClientId
+        {
+            get { return _UPSClientId; }
+        }
+        public static string UPSClientSecret
+        {
+            get { return _UPSClientSecret; }
+        }
+        public static string UPSAuthorizationURL
+        {
+            get { return _UPSAuthorizationURL; }
+        }
+        public static string UPSGenerateTokenURL
+        {
+            get { return _UPSGenerateTokenURL; }
+        }
+        public static string UPSAddressValidationURL
+        {
+            get { return _UPSAddressValidationURL; }
+        }
+        public static string UPSShopRatesURL
+        {
+            get { return _UPSShopRatesURL; }
+        }
+        public static string UPSShipFromName
+        {
+            get { return _UPSShipFromName; }
+        }
+        public static string UPSShipFromAddress
+        {
+            get { return _UPSShipFromAddress; }
+        }
+        public static string UPSShipFromCity
+        {
+            get { return _UPSShipFromCity; }
+        }
+        public static string UPSShipFromState
+        {
+            get { return _UPSShipFromState; }
+        }
+        public static string UPSShipFromZip
+        {
+            get { return _UPSShipFromZip; }
+        }
+
+
         public static string NetworkDomain
         {
             get { return _NetworkDomain; }
