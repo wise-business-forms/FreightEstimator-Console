@@ -19,7 +19,8 @@ namespace FreightEstApp35
             while (1 == 1)
             {
                 processNextRequest();
-                Console.ReadKey();            }
+                Console.ReadKey();
+            }
         }
 
         static void processNextRequest()

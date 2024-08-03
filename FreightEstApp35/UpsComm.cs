@@ -51,9 +51,35 @@ namespace FreightEstApp35
         public List<RateDetail> getRates()
         {
             List<RateDetail> rates = new List<RateDetail>();
-            StringBuilder sbResults = new StringBuilder();
 
+            #region Build out shipment information.
+            Shipment shipment = new Shipment();
+            shipment.PlantId = this.plantCode;
+            // Ship To info
+            shipment.Address = toValidate.street;
+            shipment.City = toValidate.city;
+            shipment.State_selection = toValidate.state;
+            shipment.Zip = toValidate.zip;
+            shipment.Country_selection = toValidate.country;
+            shipment.AcctNum = acctNumber.ToString();
+            shipment.package_weight = this.pkgWeight;
+            // Package info
+            shipment.number_of_packages = this.numPackages;
+            shipment.package_weight = this.pkgWeight;
+            shipment.last_package_weight = this.lastPkgWeight;
 
+            #endregion
+
+            ShopRateResponse shopRateResponse = new ShopRateResponse();
+            UPSRequest uPSRequest = new UPSRequest(shipment, new Plant(shipment.PlantId), UPSRequest.RequestOption.Shop);
+            uPSRequest.Response();
+            shopRateResponse.UPSServices = uPSRequest.UPSServices;
+
+            foreach (UPSService service in uPSRequest.UPSServices)
+            {
+                RateDetail rateDetail = new RateDetail(shipment.PlantId, service.ServiceName, 1, int.Parse(shipment.billing_weight.ToString()), false, Decimal.Parse(service.Rate), 0, 0, "UPS");
+                rates.Add(rateDetail);
+            }
 
             return (rates);
         }

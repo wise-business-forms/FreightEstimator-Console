@@ -11,7 +11,7 @@ using FreightEstApp35.UpsRateWebReference;
 
 namespace FreightEstApp35
 {
-    class UpsComm_orig
+    class UpsComm
     {
         public Address toValidate { get; set; }
         public Address toRate { get; set; }
@@ -34,7 +34,7 @@ namespace FreightEstApp35
 
         public int acctNumber { get; set; }
 
-        public UpsComm_orig()
+        public UpsComm()
         {
         }
 

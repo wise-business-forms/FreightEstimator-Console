@@ -11,9 +11,6 @@ using System.Web;
 
 namespace FreightEstApp35
 {
-    class UPSRequest
-    {
-
         public class UPSRequest
         {
             private string _request = string.Empty;
@@ -75,9 +72,7 @@ namespace FreightEstApp35
                                 Console.WriteLine($"Error: {response.StatusCode} - {response.StatusDescription}");
                             }
                         }
-
-
-                        //Log.LogRequest_Rate("paulm", _shipment.Address, _shipment.City, _shipment.State_selection, _shipment.Zip, _shipment.Country_selection, _request, _response, "");
+                        Log.LogRequest_Rate("console", _shipment.Address, _shipment.City, _shipment.State_selection, _shipment.Zip, _shipment.Country_selection, _request, _response, "");
                     }
                     catch (WebException ex)
                     {
@@ -87,14 +82,14 @@ namespace FreightEstApp35
                             {
                                 string error = reader.ReadToEnd();
                                 _response = error;
-                                //Log.LogRequest_Rate("paulm", _shipment.Address, _shipment.City, _shipment.State_selection, _shipment.Zip, _shipment.Country_selection, _request, _response, "");
+                                Log.LogRequest_Rate("console-error", _shipment.Address, _shipment.City, _shipment.State_selection, _shipment.Zip, _shipment.Country_selection, _request, _response, "");
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw ex;
-                    }
+                    Log.LogRequest_Rate("console-error", _shipment.Address, _shipment.City, _shipment.State_selection, _shipment.Zip, _shipment.Country_selection, _request, ex.Message.ToString(), "");
+                }
 
                     return _response;
                 }
@@ -348,6 +343,7 @@ namespace FreightEstApp35
                         sb.Append(", ");
                     }
                     // Add last package
+                    if(shipment.last_package_weight > 0 )
                     sb.Append(Package(shipment.last_package_weight, requestOption, shipment.freight_class_selected.ToString()));
                 }
                 else  // all packages are the same weight.
@@ -415,4 +411,3 @@ namespace FreightEstApp35
             }
         }
     }
-}

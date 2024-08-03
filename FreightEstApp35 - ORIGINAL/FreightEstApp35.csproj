@@ -84,7 +84,6 @@
     <Compile Include="Address.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="DBUtil.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="Plant.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -96,12 +95,7 @@
     <Compile Include="ProviderInfo.cs" />
     <Compile Include="RateDetail.cs" />
     <Compile Include="Request.cs" />
-    <Compile Include="Shipment.cs" />
-    <Compile Include="ShopRateResponse.cs" />
     <Compile Include="UpsComm.cs" />
-    <Compile Include="UPSRequest.cs" />
-    <Compile Include="UPSResponse.cs" />
-    <Compile Include="UPSService.cs" />
     <Compile Include="Web References\FreightRateWebReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -35,12 +35,9 @@ namespace FreightEstApp35
 
             if (drResults.Read())
             {
-                this.Id = PlantCode;
-                this.Name = Config.PlantNames[PlantCode]; // Why isn't this in the database?
                 this.Address = drResults["Address"].ToString();
                 this.City = drResults["City"].ToString();
                 this.State = drResults["State"].ToString();
-                this.PostalCode = drResults["Zip"].ToString();
                 this.Zip = drResults["Zip"].ToString();
                 this.Country = drResults["Country"].ToString();
             }

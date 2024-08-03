@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Results>
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="file:///C:/Misc Projects/Freight Estimator/Rates_Pkg_Gnd/RatingPACKAGE/PACKAGEWebServices/SCHEMA-WSDLs/common.xsd" filename="common.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="file:///C:/Misc Projects/Freight Estimator/Rates_Pkg_Gnd/RatingPACKAGE/PACKAGEWebServices/SCHEMA-WSDLs/Error1.1.xsd" filename="Error1.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="file:///C:/Misc Projects/Freight Estimator/Rates_Pkg_Gnd/RatingPACKAGE/PACKAGEWebServices/SCHEMA-WSDLs/RateWS.wsdl" filename="RateWS.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="file:///C:/Misc Projects/Freight Estimator/Rates_Pkg_Gnd/RatingPACKAGE/PACKAGEWebServices/SCHEMA-WSDLs/UPSSecurity.xsd" filename="UPSSecurity.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="file:///C:/Misc Projects/Freight Estimator/Rates_Pkg_Gnd/RatingPACKAGE/PACKAGEWebServices/SCHEMA-WSDLs/RateWebServiceSchema.xsd" filename="RateWebServiceSchema.xsd" />
+  </Results>
+</DiscoveryClientResultsFile>
