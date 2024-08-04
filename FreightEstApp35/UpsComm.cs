@@ -77,9 +77,48 @@ namespace FreightEstApp35
             uPSRequest.Response();
             shopRateResponse.UPSServices = uPSRequest.UPSServices;
 
+            DBUtil dBUtil = new DBUtil();
+            var charges = dBUtil.getPlantCharges("UPS", 0);
+
             foreach (UPSService service in uPSRequest.UPSServices)
             {
                 RateDetail rateDetail = new RateDetail(shipment.PlantId, service.ServiceName, 1, int.Parse(shipment.billing_weight.ToString()), false, Decimal.Parse(service.Rate), 0, 0, "UPS");
+                foreach (DataRow row in charges.Tables[0].Rows)
+                {
+                    if (row["PlantCode"].ToString() == shipment.PlantId)
+                    {
+                        // Column names do not match service names.....
+                        var serviceName = string.Empty;
+                        switch (service.ServiceName)
+                        {
+                            case "UPSNextDayAir":
+                                serviceName = "NextDayAir";
+                                break;
+                            case "UPS2ndDayAir":
+                                serviceName = "SecondDayAir";
+                                break;
+                            case "UPSGround":
+                                serviceName = "Ground";
+                                break;
+                            case "UPS3DaySelect":
+                                serviceName = "ThreeDaySelect";
+                                break;
+                            case "NextDayAirSaver":
+                                serviceName = "NextDayAirSaver";
+                                break;
+                            case "NextDayAirEarlyAM":
+                                serviceName = "NextDayAirEarlyAM";
+                                break;
+                            case "SecondDayAirAM":
+                                serviceName = "SecondDayAirAM";
+                                break;
+                            case "UPSSaver":
+                                serviceName = "Saver";
+                                break;
+                        }
+                        rateDetail.totalCharges += Decimal.Parse(row[serviceName].ToString());                      
+                    };
+                }
                 rates.Add(rateDetail);
             }
             #endregion
@@ -352,6 +391,8 @@ namespace FreightEstApp35
                             ltlServices.Add(service);
                         }
 
+                        DBUtil dBUtil = new DBUtil();
+                        var charges = dBUtil.getPlantCharges("UPS", 0);
                         //List<Plant> plants = Plant.Plants();
                         //foreach(var surcharge in )
                         response.UPSServices = ltlServices.ToArray();
