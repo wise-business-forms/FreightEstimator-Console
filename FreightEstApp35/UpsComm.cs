@@ -72,54 +72,70 @@ namespace FreightEstApp35
             #endregion
 
             #region Return results
-            ShopRateResponse shopRateResponse = new ShopRateResponse();
-            UPSRequest uPSRequest = new UPSRequest(shipment, new Plant(shipment.PlantId), UPSRequest.RequestOption.Shop);
-            uPSRequest.Response();
-            shopRateResponse.UPSServices = uPSRequest.UPSServices;
+            if (shipment.number_of_packages != 0)  // Apparently this is a thing. Orders in the queue may not have packages but have weight.
 
-            DBUtil dBUtil = new DBUtil();
-            var charges = dBUtil.getPlantCharges("UPS", 0);
-
-            foreach (UPSService service in uPSRequest.UPSServices)
             {
-                RateDetail rateDetail = new RateDetail(shipment.PlantId, service.ServiceName, 1, int.Parse(shipment.billing_weight.ToString()), false, Decimal.Parse(service.Rate), 0, 0, "UPS");
-                foreach (DataRow row in charges.Tables[0].Rows)
+                ShopRateResponse shopRateResponse = new ShopRateResponse();
+                UPSRequest uPSRequest = new UPSRequest(shipment, new Plant(shipment.PlantId), UPSRequest.RequestOption.Shop);
+                uPSRequest.Response();
+                shopRateResponse.UPSServices = uPSRequest.UPSServices;
+
+                DBUtil dBUtil = new DBUtil();
+                var charges = dBUtil.getPlantCharges("UPS", 0);
+
+                foreach (UPSService service in uPSRequest.UPSServices)
                 {
-                    if (row["PlantCode"].ToString() == shipment.PlantId)
+                    service.Rate = RateCalculations.CalculateRate(shipment.AcctNum, shipment.PlantId, service.ServiceName, service.Rate, service.CWTRate, shipment.number_of_packages, shipment.package_weight.ToString(), shipment.last_package_weight.ToString()); // Should use CWT not ServiceName for cleanliness.
+                    try
                     {
-                        // Column names do not match service names.....
-                        var serviceName = string.Empty;
-                        switch (service.ServiceName)
+                        RateDetail rateDetail = new RateDetail(shipment.PlantId, service.ServiceName, 1, int.Parse(shipment.billing_weight.ToString()), false, Decimal.Parse(service.Rate.Replace("$", "")), 0, 0, "UPS");
+                    
+                                    
+                    //RateDetail rateDetail = new RateDetail(shipment.PlantId, service.ServiceName, 1, int.Parse(shipment.billing_weight.ToString()), false, Decimal.Parse(service.Rate), 0, 0, "UPS");
+                    foreach (DataRow row in charges.Tables[0].Rows)
+                    {
+                        if (row["PlantCode"].ToString() == shipment.PlantId)
                         {
-                            case "UPSNextDayAir":
-                                serviceName = "NextDayAir";
-                                break;
-                            case "UPS2ndDayAir":
-                                serviceName = "SecondDayAir";
-                                break;
-                            case "UPSGround":
-                                serviceName = "Ground";
-                                break;
-                            case "UPS3DaySelect":
-                                serviceName = "ThreeDaySelect";
-                                break;
-                            case "NextDayAirSaver":
-                                serviceName = "NextDayAirSaver";
-                                break;
-                            case "NextDayAirEarlyAM":
-                                serviceName = "NextDayAirEarlyAM";
-                                break;
-                            case "SecondDayAirAM":
-                                serviceName = "SecondDayAirAM";
-                                break;
-                            case "UPSSaver":
-                                serviceName = "Saver";
-                                break;
-                        }
-                        rateDetail.totalCharges += Decimal.Parse(row[serviceName].ToString());                      
-                    };
+                            // Column names do not match service names.....
+                            var serviceName = string.Empty;
+                            switch (service.ServiceName)
+                            {
+                                case "UPSNextDayAir":
+                                    serviceName = "NextDayAir";
+                                    break;
+                                case "UPS2ndDayAir":
+                                    serviceName = "SecondDayAir";
+                                    break;
+                                case "UPSGround":
+                                    serviceName = "Ground";
+                                    break;
+                                case "UPS3DaySelect":
+                                    serviceName = "ThreeDaySelect";
+                                    break;
+                                case "NextDayAirSaver":
+                                    serviceName = "NextDayAirSaver";
+                                    break;
+                                case "NextDayAirEarlyAM":
+                                    serviceName = "NextDayAirEarlyAM";
+                                    break;
+                                case "SecondDayAirAM":
+                                    serviceName = "SecondDayAirAM";
+                                    break;
+                                case "UPSSaver":
+                                    serviceName = "Saver";
+                                    break;
+                            }
+                            rateDetail.totalCharges += Decimal.Parse(row[serviceName].ToString());
+                        };
+                    
+                    }
+                    rates.Add(rateDetail);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
                 }
-                rates.Add(rateDetail);
             }
             #endregion
             return (rates);

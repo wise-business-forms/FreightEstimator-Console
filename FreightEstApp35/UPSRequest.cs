@@ -95,77 +95,80 @@ namespace FreightEstApp35
                 }
             }
 
-            private UPSService ParseUPSService(JToken service)
+        private UPSService ParseUPSService(JToken service)
+        {
+            UPSService uPSService = new UPSService();
+            var serviceCode = service.SelectToken("Service")?.SelectToken("Code")?.ToString() ?? "No Service Code";
+            switch (serviceCode)
             {
-                UPSService uPSService = new UPSService();
-                var serviceCode = service.SelectToken("Service")?.SelectToken("Code")?.ToString() ?? "No Service Code";
-                switch (serviceCode)
-                {
-                    case "01":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPSNextDayAir.ToString();
-                        break;
-                    case "02":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPS2ndDayAir.ToString();
-                        break;
-                    case "03":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPSGround.ToString();
-                        break;
-                    case "07":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPSWorldwideExpress.ToString();
-                        break;
-                    case "08":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPSWorldwideExpedited.ToString();
-                        break;
-                    case "11":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPSStandard.ToString();
-                        break;
-                    case "12":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPS3DaySelect.ToString();
-                        break;
-                    case "13":
-                        uPSService.ServiceName = UPSService.ServiceCode.NextDayAirSaver.ToString();
-                        break;
-                    case "14":
-                        uPSService.ServiceName = UPSService.ServiceCode.NextDayAirEarlyAM.ToString();
-                        break;
-                    case "54":
-                        uPSService.ServiceName = UPSService.ServiceCode.ExpressPlus.ToString();
-                        break;
-                    case "59":
-                        uPSService.ServiceName = UPSService.ServiceCode.SecondDayAirAM.ToString();
-                        break;
-                    case "65":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPSSaver.ToString();
-                        break;
-                    case "82":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPSTodayStandard.ToString();
-                        break;
-                    case "83":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPSTodayDedicatedCourier.ToString();
-                        break;
-                    case "84":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPSTodayIntercity.ToString();
-                        break;
-                    case "85":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPSTodayExpress.ToString();
-                        break;
-                    case "86":
-                        uPSService.ServiceName = UPSService.ServiceCode.UPSTodayExpressSaver.ToString();
-                        break;
-                    default:
-                        uPSService.ServiceName = "No Service Name";
-                        break;
-                }
-                uPSService.PlantCode = _shipment.PlantId;
-                uPSService.Rate = service.SelectToken("TotalCharges.MonetaryValue")?.ToString() ?? "-";
-                uPSService.CWT = "TBD";
-
-                return uPSService;
+                case "01":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPSNextDayAir.ToString();
+                    break;
+                case "02":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPS2ndDayAir.ToString();
+                    break;
+                case "03":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPSGround.ToString();
+                    break;
+                case "07":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPSWorldwideExpress.ToString();
+                    break;
+                case "08":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPSWorldwideExpedited.ToString();
+                    break;
+                case "11":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPSStandard.ToString();
+                    break;
+                case "12":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPS3DaySelect.ToString();
+                    break;
+                case "13":
+                    uPSService.ServiceName = UPSService.ServiceCode.NextDayAirSaver.ToString();
+                    break;
+                case "14":
+                    uPSService.ServiceName = UPSService.ServiceCode.NextDayAirEarlyAM.ToString();
+                    break;
+                case "54":
+                    uPSService.ServiceName = UPSService.ServiceCode.ExpressPlus.ToString();
+                    break;
+                case "59":
+                    uPSService.ServiceName = UPSService.ServiceCode.SecondDayAirAM.ToString();
+                    break;
+                case "65":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPSSaver.ToString();
+                    break;
+                case "82":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPSTodayStandard.ToString();
+                    break;
+                case "83":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPSTodayDedicatedCourier.ToString();
+                    break;
+                case "84":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPSTodayIntercity.ToString();
+                    break;
+                case "85":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPSTodayExpress.ToString();
+                    break;
+                case "86":
+                    uPSService.ServiceName = UPSService.ServiceCode.UPSTodayExpressSaver.ToString();
+                    break;
+                default:
+                    uPSService.ServiceName = "No Service Name";
+                    break;
             }
+            uPSService.PlantCode = _shipment.PlantId;
+            uPSService.Rate = service.SelectToken("TotalCharges.MonetaryValue")?.ToString() ?? "-";
+            uPSService.CWTRate = service.SelectToken("NegotiatedRateCharges.TotalCharge.MonetaryValue")?.ToString() ?? "-";
+            uPSService.CWT = "TBD";
 
-            public UPSService[] UPSServices
+            return uPSService;
+        }
+
+        public UPSService[] UPSServices
+        {
+            get
             {
-                get
+                try
                 {
                     dynamic data = JObject.Parse(_response);
 
@@ -183,7 +186,7 @@ namespace FreightEstApp35
 
                         // Remove extra (null) UPS Services values slots from the array.
                         serviceSort.RemoveAll(service => service == null);
-                        
+
                         _uPSServices = serviceSort.ToArray();
                     }
                     else
@@ -192,11 +195,16 @@ namespace FreightEstApp35
                         serviceSort.Add(ParseUPSService(services));
                         return serviceSort.ToArray();
                     }
-                    return _uPSServices;
                 }
+                catch (Exception ex)
+                {
+                    Log.LogRequest_Rate("", _shipment.Address, _shipment.City, _shipment.State_selection, _shipment.Zip, _shipment.Country_selection, _request, ex.Message, "");
+                }
+                return _uPSServices;
             }
+        }
 
-            public string XAVRequest { get; set; }
+        public string XAVRequest { get; set; }
             public AddressKeyFormat AddressKeyFormat { get; set; }
 
             public string GetToken()
@@ -237,177 +245,184 @@ namespace FreightEstApp35
             }
 
 
-            /// <summary>
-            /// Builds the JSON shipment request for the UPS Rate API
-            /// </summary>
-            /// <param name="shipment"></param>
-            /// <returns></returns>
-            private string RateRequest(Shipment shipment, Plant plant, RequestOption requestOption)
+        /// <summary>
+        /// Builds the JSON shipment request for the UPS Rate API
+        /// </summary>
+        /// <param name="shipment"></param>
+        /// <returns></returns>
+        private string RateRequest(Shipment shipment, Plant plant, RequestOption requestOption)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("{\"RateRequest\":");
+
+            sb.Append("{\"Request\":");
+            sb.Append("{\"TransactionReference\":{\"CustomerContext\": \"CustomerContext\"}"); // TransactionReference
+            sb.Append("},"); // Request
+
+            sb.Append("\"Shipment\":");
+            sb.Append("{\"Shipper\":");
+            sb.Append("{\"Name\": \"" + plant.Name + "\",");
+            sb.Append("\"ShipperNumber\": \"" + Config.ShipFromShipperNumber + "\",");
+            sb.Append("\"Address\":");
+            sb.Append("{\"AddressLine\": [");
+            sb.Append("\"" + plant.Address + "\",");
+            sb.Append("\"\",");
+            sb.Append("\"\"");
+            sb.Append("],"); // AddressLine
+            sb.Append("\"City\": \"" + plant.City + "\",");
+            sb.Append("\"StateProvinceCode\": \"" + plant.State + "\",");
+            sb.Append("\"PostalCode\": \"" + plant.Zip + "\",");
+            sb.Append("\"CountryCode\": \"" + plant.Country + "\"");
+            sb.Append("}"); // Address
+            sb.Append("},"); // Shipper
+
+            sb.Append("\"ShipTo\":");
+            sb.Append("{\"Name\": \"" + shipment.AcctNum + "\",");
+            sb.Append("\"Address\":");
+            sb.Append("{\"AddressLine\": [");
+            sb.Append("\"" + shipment.Address + "\",");
+            sb.Append("\"\",");
+            sb.Append("\"\"");
+            sb.Append("],");
+            sb.Append("\"City\": \"" + shipment.City + "\",");
+            sb.Append("\"StateProvinceCode\": \"" + shipment.State_selection + "\",");
+            sb.Append("\"PostalCode\": \"" + shipment.Zip + "\",");
+            sb.Append("\"CountryCode\": \"" + shipment.Country_selection + "\"");
+            sb.Append("}"); // Address
+            sb.Append("},"); // ShipTo
+
+            sb.Append("\"ShipFrom\":");
+            sb.Append("{\"Name\": \"" + plant.Name + "\",");
+            sb.Append("\"Address\":");
+            sb.Append("{\"AddressLine\": [");
+            sb.Append("\"" + plant.Address + "\",");
+            sb.Append("\"\",");
+            sb.Append("\"\"");
+            sb.Append("],");
+            sb.Append("\"City\": \"" + plant.City + "\",");
+            sb.Append("\"StateProvinceCode\": \"" + plant.State + "\",");
+            sb.Append("\"PostalCode\": \"" + plant.Zip + "\",");
+            sb.Append("\"CountryCode\": \"" + plant.Country + "\"");
+            sb.Append("}"); // Address
+            sb.Append("},"); // ShipFrom
+
+            // Ground Freight
+            if (requestOption == RequestOption.Rate)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("{\"RateRequest\":");
-
-                sb.Append("{\"Request\":");
-                sb.Append("{\"TransactionReference\":{\"CustomerContext\": \"CustomerContext\"}"); // TransactionReference
-                sb.Append("},"); // Request
-
-                sb.Append("\"Shipment\":");
-                sb.Append("{\"Shipper\":");
-                sb.Append("{\"Name\": \"" + plant.Name + "\",");
-                sb.Append("\"ShipperNumber\": \"" + Config.ShipFromShipperNumber + "\",");
-                sb.Append("\"Address\":");
-                sb.Append("{\"AddressLine\": [");
-                sb.Append("\"" + plant.Address + "\",");
-                sb.Append("\"\",");
-                sb.Append("\"\"");
-                sb.Append("],"); // AddressLine
-                sb.Append("\"City\": \"" + plant.City + "\",");
-                sb.Append("\"StateProvinceCode\": \"" + plant.State + "\",");
-                sb.Append("\"PostalCode\": \"" + plant.Zip + "\",");
-                sb.Append("\"CountryCode\": \"" + plant.Country + "\"");
-                sb.Append("}"); // Address
-                sb.Append("},"); // Shipper
-
-                sb.Append("\"ShipTo\":");
-                sb.Append("{\"Name\": \"" + shipment.AcctNum + "\",");
-                sb.Append("\"Address\":");
-                sb.Append("{\"AddressLine\": [");
-                sb.Append("\"" + shipment.Address + "\",");
-                sb.Append("\"\",");
-                sb.Append("\"\"");
-                sb.Append("],");
-                sb.Append("\"City\": \"" + shipment.City + "\",");
-                sb.Append("\"StateProvinceCode\": \"" + shipment.State_selection + "\",");
-                sb.Append("\"PostalCode\": \"" + shipment.Zip + "\",");
-                sb.Append("\"CountryCode\": \"" + shipment.Country_selection + "\"");
-                sb.Append("}"); // Address
-                sb.Append("},"); // ShipTo
-
-                sb.Append("\"ShipFrom\":");
-                sb.Append("{\"Name\": \"" + plant.Name + "\",");
-                sb.Append("\"Address\":");
-                sb.Append("{\"AddressLine\": [");
-                sb.Append("\"" + plant.Address + "\",");
-                sb.Append("\"\",");
-                sb.Append("\"\"");
-                sb.Append("],");
-                sb.Append("\"City\": \"" + plant.City + "\",");
-                sb.Append("\"StateProvinceCode\": \"" + plant.State + "\",");
-                sb.Append("\"PostalCode\": \"" + plant.Zip + "\",");
-                sb.Append("\"CountryCode\": \"" + plant.Country + "\"");
-                sb.Append("}"); // Address
-                sb.Append("},"); // ShipFrom
-
-                // Ground Freight
-                if (requestOption == RequestOption.Rate)
-                {
-                    sb.Append("\"FRSPaymentInformation\": {\"Type\": {\"Code\": \"01\"}},");
-                }
-                else
-                {
-                    sb.Append("\"PaymentDetails\":");
-                    sb.Append("{\"ShipmentCharge\":");
-                    sb.Append("{\"Type\": \"01\",");
-                    sb.Append("\"BillShipper\": {\"AccountNumber\": \"" + Config.ShipFromShipperNumber + "\"}");
-                    sb.Append("}"); // ShipmentCharge
-                    sb.Append("},"); // PaymentDetails
-                }
-
-                // Ground Freight
-                if (requestOption == RequestOption.Rate)
-                {
-                    sb.Append("\"ShipmentRatingOptions\": {");
-                    //sb.Append("\"TPFCNegotiatedRatesIndicator\": \"Y\",");
-                    sb.Append("\"NegotiatedRatesIndicator\": \"\",");
-                    sb.Append("\"FRSShipmentIndicator\": \"\"");
-                    sb.Append("},"); // ShipmentRatingOptions
-                }
-
-
-                sb.Append("\"Service\":");
-                sb.Append("{\"Code\": \"03\",");
-                sb.Append("\"Description\": \"UPS Worldwide Economy DDU\"");
-                sb.Append("},"); // Service
-
-
-                sb.Append("\"NumOfPieces\": \"" + shipment.number_of_packages + "\",");
-
-                // Add the packages to the request but be mindful of the last package if it is different.
-                sb.Append("\"Package\":");
-                sb.Append("[");
-                if (shipment.package_weight != shipment.last_package_weight)
-                {
-                    for (int p = 1; p <= shipment.number_of_packages - 1; p++)
-                    {
-                        sb.Append(Package(shipment.package_weight, requestOption, shipment.freight_class_selected.ToString()));
-                        sb.Append(", ");
-                    }
-                    // Add last package
-                    if(shipment.last_package_weight > 0 )
-                    sb.Append(Package(shipment.last_package_weight, requestOption, shipment.freight_class_selected.ToString()));
-                }
-                else  // all packages are the same weight.
-                {
-                    for (int p = 1; p <= shipment.number_of_packages; p++)
-                    {
-                        sb.Append(Package(shipment.package_weight, requestOption, shipment.freight_class_selected.ToString()));
-                        if (p < shipment.number_of_packages) sb.Append(", ");
-                    }
-                }
-                sb.Append("],");
-
-
-                if (requestOption == RequestOption.Rate)
-                {
-                    sb.Append("\"Commodity\":");
-                    sb.Append("{\"FreightClass\": \"55\"");
-                    //sb.Append("{\"FreightClass\": \"" + shipment.freight_class_selected + "\"");
-                    sb.Append("},");
-                }
-                //sb.Append("\"OversizeIndicator\": \"X\",");
-                sb.Append("\"MinimumBillableWeightIndicator\": \"X\"");
-                sb.Append("}"); // RateRequest.Shipment
-                sb.Append("}"); // RateRequest
-                sb.Append("}"); // ROOT
-                return sb.ToString();
+                sb.Append("\"FRSPaymentInformation\": {\"Type\": {\"Code\": \"01\"}},");
+            }
+            else
+            {
+                sb.Append("\"PaymentDetails\":");
+                sb.Append("{\"ShipmentCharge\":");
+                sb.Append("{\"Type\": \"01\",");
+                sb.Append("\"BillShipper\": {\"AccountNumber\": \"" + Config.ShipFromShipperNumber + "\"}");
+                sb.Append("}"); // ShipmentCharge
+                sb.Append("},"); // PaymentDetails
             }
 
-            private string Package(float package_weight, RequestOption requestOption, string freightClass)
+            sb.Append("\"ShipmentRatingOptions\": {");
+            //sb.Append("\"TPFCNegotiatedRatesIndicator\": \"Y\",");
+
+            // Ground Freight
+            if (requestOption == RequestOption.Rate)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("{\"PackagingType\":");
+                sb.Append("\"FRSShipmentIndicator\": \"\",");
+            }
 
-                sb.Append("{\"Code\": \"02\",");
-                sb.Append("\"Description\": \"Packaging\"");
-                sb.Append("},"); // Code
+            sb.Append("\"NegotiatedRatesIndicator\": \"\"");
+            sb.Append("},"); // ShipmentRatingOptions
 
-                sb.Append("\"Dimensions\":");
-                sb.Append("{\"UnitOfMeasurement\":");
-                sb.Append("{\"Code\": \"IN\",");
-                sb.Append("\"Description\": \"Inches\"");
+
+            sb.Append("\"Service\":");
+            sb.Append("{\"Code\": \"03\",");
+            sb.Append("\"Description\": \"UPS Worldwide Economy DDU\"");
+            sb.Append("},"); // Service
+
+
+            sb.Append("\"NumOfPieces\": \"" + shipment.number_of_packages + "\",");
+
+            // Add the packages to the request but be mindful of the last package if it is different.
+            sb.Append("\"Package\":");
+            sb.Append("[");
+
+            if (shipment.package_weight != shipment.last_package_weight)
+            {
+                for (int p = 1; p <= shipment.number_of_packages - 1; p++)
+                {
+                    sb.Append(Package(shipment.package_weight, requestOption, shipment.freight_class_selected.ToString()));
+                    sb.Append(", ");
+                }
+
+                // Packages have to weight something.  Sometimes people will not give the last package a weight if it is the same.
+                if (shipment.last_package_weight == 0 || shipment.last_package_weight.ToString().Trim().Length == 0) shipment.last_package_weight = shipment.package_weight;
+
+                // Add last package
+                sb.Append(Package(shipment.last_package_weight, requestOption, shipment.freight_class_selected.ToString()));
+            }
+            else  // all packages are the same weight.
+            {
+                for (int p = 1; p <= shipment.number_of_packages; p++)
+                {
+                    sb.Append(Package(shipment.package_weight, requestOption, shipment.freight_class_selected.ToString()));
+                    if (p < shipment.number_of_packages) sb.Append(", ");
+                }
+            }
+
+            sb.Append("],");
+
+
+            if (requestOption == RequestOption.Rate)
+            {
+                sb.Append("\"Commodity\":");
+                sb.Append("{\"FreightClass\": \"55\"");
+                //sb.Append("{\"FreightClass\": \"" + shipment.freight_class_selected + "\"");
                 sb.Append("},");
-                sb.Append("\"Length\": \"5\",");
-                sb.Append("\"Width\": \"5\",");
-                sb.Append("\"Height\": \"5\"");
-                sb.Append("},"); // Dimentions
-
-                sb.Append("\"PackageWeight\":");
-                sb.Append("{\"UnitOfMeasurement\":");
-                sb.Append("{\"Code\": \"LBS\",");
-                sb.Append("\"Description\": \"Pounds\"");
-                sb.Append("},");  // UnitOfMeasurement
-                sb.Append("\"Weight\": \"" + package_weight + "\"");
-                sb.Append("}"); // PackageWeight
-
-                // Ground Freight
-                if (requestOption == RequestOption.Rate)
-                {
-                    //sb.Append(",\"Commodity\": {\"FreightClass\": \"" + freightClass + "\"}");
-                    sb.Append(",\"Commodity\": {\"FreightClass\": \"55\"}");
-                }
-
-                sb.Append("}"); // PackagingType
-                return sb.ToString();
             }
+            //sb.Append("\"OversizeIndicator\": \"X\",");
+            sb.Append("\"MinimumBillableWeightIndicator\": \"X\"");
+            sb.Append("}"); // RateRequest.Shipment
+            sb.Append("}"); // RateRequest
+            sb.Append("}"); // ROOT
+            return sb.ToString();
+        }
+
+        private string Package(float package_weight, RequestOption requestOption, string freightClass)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("{\"PackagingType\":");
+
+            sb.Append("{\"Code\": \"02\",");
+            sb.Append("\"Description\": \"Packaging\"");
+            sb.Append("},"); // Code
+
+            sb.Append("\"Dimensions\":");
+            sb.Append("{\"UnitOfMeasurement\":");
+            sb.Append("{\"Code\": \"IN\",");
+            sb.Append("\"Description\": \"Inches\"");
+            sb.Append("},");
+            sb.Append("\"Length\": \"5\",");
+            sb.Append("\"Width\": \"5\",");
+            sb.Append("\"Height\": \"5\"");
+            sb.Append("},"); // Dimentions
+
+            sb.Append("\"PackageWeight\":");
+            sb.Append("{\"UnitOfMeasurement\":");
+            sb.Append("{\"Code\": \"LBS\",");
+            sb.Append("\"Description\": \"Pounds\"");
+            sb.Append("},");  // UnitOfMeasurement
+            sb.Append("\"Weight\": \"" + package_weight + "\"");
+            sb.Append("}"); // PackageWeight
+
+            // Ground Freight
+            if (requestOption == RequestOption.Rate)
+            {
+                //sb.Append(",\"Commodity\": {\"FreightClass\": \"" + freightClass + "\"}");
+                sb.Append(",\"Commodity\": {\"FreightClass\": \"55\"}");
+            }
+
+            sb.Append("}"); // PackagingType
+            return sb.ToString();
         }
     }
+}

@@ -19,7 +19,8 @@ namespace FreightEstApp35
             while (1 == 1)
             {
                 processNextRequest();
-                Console.ReadKey();            }
+                //Console.ReadKey();            
+            }
         }
 
         static void processNextRequest()
@@ -64,9 +65,12 @@ namespace FreightEstApp35
                         } 
                         else
                         {
-                            myUPS.numPackages = myRequest.packageWeights.Count;
-                            myUPS.pkgWeight = 0;
-                            myUPS.lastPkgWeight = 0;
+                            //myUPS.numPackages = myRequest.packageWeights.Count;
+                            //myUPS.pkgWeight = 0;
+                            //myUPS.lastPkgWeight = 0;
+                            myUPS.numPackages = myRequest.numPackages;
+                            myUPS.pkgWeight = myRequest.pkgWeight;
+                            myUPS.lastPkgWeight = myRequest.lastPkgWeight;
                         }
 
                         myUPS.accessorials = myRequest.accessorials;
@@ -132,7 +136,7 @@ namespace FreightEstApp35
                                 WiseTools.logToFile(Config.logFile, "Done with UPS Ground Freight rates", true);
                             }
 
-
+                            Console.WriteLine("Address: " + myRequest.toAddress.street);
                             //WiseTools.logToFile(Config.logFile, "About to call routine to save results", true);
                             myRequest.saveResults(rates, ltlRates);
 
