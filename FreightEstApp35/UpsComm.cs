@@ -125,6 +125,7 @@ namespace FreightEstApp35
                                     serviceName = "Saver";
                                     break;
                             }
+                            rateDetail.serviceDesc = serviceName;
                             rateDetail.totalCharges += Decimal.Parse(row[serviceName].ToString());
                         };
                     

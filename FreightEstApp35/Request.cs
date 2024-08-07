@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data;
+using static FreightEstApp35.RateCalculations;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace FreightEstApp35
 {
@@ -282,7 +285,7 @@ namespace FreightEstApp35
                 rateInfo[0] = rate.basicProvider;
                 rateInfo[1] = rate.basicMethod;
                 rateInfo[2] = rate.basicRate.ToString();
-                rateInfo[3] = "";
+                rateInfo[3] = rate.serviceDesc.ToString();
                 rateInfo[4] = rate.addressClassification.ToString(); // If value is 2, Residential is TRUE
                 rateInfo[5] = ""; // no note on UPS rates
                 ratesToSave.Add(rateInfo);
@@ -298,7 +301,7 @@ namespace FreightEstApp35
                 rateInfo[0] = rate.basicProvider;
                 rateInfo[1] = rate.basicMethod;
                 rateInfo[2] = rate.basicRate.ToString();
-                rateInfo[3] = "";
+                rateInfo[3] = rate.serviceDesc.ToString();
                 rateInfo[4] = rate.addressClassification.ToString(); // If value is 2, Residential is TRUE
                 if (rate.note == null)
                 {
@@ -406,7 +409,34 @@ namespace FreightEstApp35
 
             if(!ProviderInfo.freightAbbreviations.TryGetValue(fullMethod, out shortMethod))
             {
-                shortMethod = "";
+                // Translate the service name into UI format.
+                switch (fullMethod)
+                {
+                    case "UPSGround":
+                        shortMethod = "Ground";
+                        break;
+                    case "UPSNextDayAir":
+                        shortMethod = "Next Day Air";
+                        break;
+                    case "UPSNextDayAirEarlyAM":
+                        shortMethod = "Next Day Air Early A.M.";
+                        break;
+                    case "UPSNextDayAirSaver":
+                        shortMethod = "Next Day Air Saver";
+                        break;
+                    case "UPSSecondDayAir":
+                        shortMethod = "Second Day Air";
+                        break;
+                    case "UPS3DaySelect":
+                        shortMethod = "Three - Day Select";
+                        break;
+                    case "UPSGroundFreight":
+                        shortMethod = "UPS Ground Freight";
+                        break;
+                    default:
+                        shortMethod = fullMethod;
+                        break;
+                }
             }
             
             if (shortMethod == "")

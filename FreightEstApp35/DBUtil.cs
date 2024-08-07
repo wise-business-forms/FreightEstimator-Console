@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Data.SqlClient;
 using System.Data;
+using Newtonsoft.Json.Linq;
 
 namespace FreightEstApp35
 {
@@ -110,93 +111,86 @@ namespace FreightEstApp35
 
         internal void saveResults(string source, string uniqueId, List<string[]> ratesToSave, Address toAddress)
         {
-            //WiseTools.logToFile(Config.logFile, "Starting saveResults", true);
-            SqlConnection conn = new SqlConnection(connString);
-            string sql = "UPDATE  " + Config.RemoteServerName + ".CostPlus.dbo.FreightRequests SET Carrier01 = @Carrier01, Service01 = @Service01, ServiceCode01 = @ServiceCode01, Rate01 = @Rate01, Note01 = @Note01, ";
-            //string sql = "UPDATE UPSRATE.dbo.FreightRequests_" + Config.RemoteServerName + " SET Carrier01 = @Carrier01, Service01 = @Service01, ServiceCode01 = @ServiceCode01, Rate01 = @Rate01, Note01 = @Note01, ";
-            sql += "Carrier02 = @Carrier02, Service02 = @Service02, ServiceCode02 = @ServiceCode02, Rate02 = @Rate02, Note02 = @Note02, ";
-            sql += "Carrier03 = @Carrier03, Service03 = @Service03, ServiceCode03 = @ServiceCode03, Rate03 = @Rate03, Note03 = @Note03, ";
-            sql += "Carrier04 = @Carrier04, Service04 = @Service04, ServiceCode04 = @ServiceCode04, Rate04 = @Rate04, Note04 = @Note04, ";
-            sql += "Carrier05 = @Carrier05, Service05 = @Service05, ServiceCode05 = @ServiceCode05, Rate05 = @Rate05, Note05 = @Note05, ";
-            sql += "Carrier06 = @Carrier06, Service06 = @Service06, ServiceCode06 = @ServiceCode06, Rate06 = @Rate06, Note06 = @Note06, ";
-            sql += "Carrier07 = @Carrier07, Service07 = @Service07, ServiceCode07 = @ServiceCode07, Rate07 = @Rate07, Note07 = @Note07, ";
-            sql += "Carrier08 = @Carrier08, Service08 = @Service08, ServiceCode08 = @ServiceCode08, Rate08 = @Rate08, Note08 = @Note08, ";
-            sql += "Carrier09 = @Carrier09, Service09 = @Service09, ServiceCode09 = @ServiceCode09, Rate09 = @Rate09, Note09 = @Note09, ";
-            sql += "Carrier10 = @Carrier10, Service10 = @Service10, ServiceCode10 = @ServiceCode10, Rate10 = @Rate10, Note10 = @Note10, ";
-            sql += "Carrier11 = @Carrier11, Service11 = @Service11, ServiceCode11 = @ServiceCode11, Rate11 = @Rate11, Note11 = @Note11, ";
-            sql += "Carrier12 = @Carrier12, Service12 = @Service12, ServiceCode12 = @ServiceCode12, Rate12 = @Rate12, Note12 = @Note12, ";
-            sql += "Carrier13 = @Carrier13, Service13 = @Service13, ServiceCode13 = @ServiceCode13, Rate13 = @Rate13, Note13 = @Note13, ";
-            sql += "Carrier14 = @Carrier14, Service14 = @Service14, ServiceCode14 = @ServiceCode14, Rate14 = @Rate14, Note14 = @Note14, ";
-            sql += "Carrier15 = @Carrier15, Service15 = @Service15, ServiceCode15 = @ServiceCode15, Rate15 = @Rate15, Note15 = @Note15, ";
-            sql += "ClassifiedResidential = @ClassifiedResidential, SubstitutedZip = @SubstitutedZip, ";
-            sql += "ErrorCode01 = NULL, ErrorDesc01 = NULL, ";
-            sql += "ErrorCode02 = NULL, ErrorDesc02 = NULL, ";
-            sql += "ErrorCode03 = NULL, ErrorDesc03 = NULL, ";
-            sql += "DateProcessed = GETDATE(), DateRated = GETDATE() ";
-            sql += "WHERE LoginId = @source AND QtyNumber = @uniqueId";
-
-
-            //WiseTools.logToFile(Config.logFile, sql, true);
-
-            SqlCommand cmd = new SqlCommand(sql, conn);
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandTimeout = 300;
-
-            cmd.Parameters.Add("@source", SqlDbType.VarChar, 50).Value = source;
-            cmd.Parameters.Add("@uniqueId", SqlDbType.TinyInt).Value = int.Parse(uniqueId);
-
-            string substitutedZip = "";
-            if (toAddress.zip.IndexOf("-") < 0)
+            try
             {
-                substitutedZip = verifyAndCorrectZipCode(toAddress.city, toAddress.state, toAddress.zip);
+                string substitutedZip = "";
+                bool _residential = false;
+
+                //if (toAddress.zip.IndexOf("-") < 0)
+                //{
+                //    substitutedZip = verifyAndCorrectZipCode(toAddress.city, toAddress.state, toAddress.zip);
+                //}
+                substitutedZip = toAddress.zip;
+
+                if (ratesToSave.Count > 0)
+                {
+                    _residential = (ratesToSave[0][4] == "2"); //If address classification is 2, then this was classified residential
+                }
+                else
+                {
+                    _residential = false;
+                }
+
+                StringBuilder sql = new StringBuilder("UPDATE ");
+                sql.Append(Config.RemoteServerName);
+                sql.Append(".CostPlus.dbo.FreightRequests SET ");
+                int i = 1;
+                foreach (string[] rate in ratesToSave)
+                {
+                    sql.Append("Carrier");
+                    sql.Append(i.ToString("D2"));
+                    sql.Append(" = '");
+                    sql.Append(rate[0]);
+                    sql.Append("',");
+                    sql.Append("Service");
+                    sql.Append(i.ToString("D2"));
+                    sql.Append(" = '");
+                    sql.Append(rate[1]);
+                    sql.Append("',");
+                    //sql.Append("ServiceCode");
+                    //sql.Append(i.ToString("D2"));
+                    //sql.Append(" = ");
+                    //sql.Append(rate[2]);
+                    //sql.Append(",");
+                    sql.Append("Rate");
+                    sql.Append(i.ToString("D2"));
+                    sql.Append(" = ");
+                    sql.Append(rate[2]);
+                    sql.Append(',');
+                    sql.Append("Note");
+                    sql.Append(i.ToString("D2"));
+                    sql.Append(" = ");
+                    sql.Append(rate[4]);
+                    sql.Append(',');
+                    i++;
+                }
+                sql.Append("ClassifiedResidential=").Append(_residential ? 1 : 0).Append(",");
+                sql.Append("SubstitutedZip=").Append(substitutedZip).Append(",");
+                sql.Append("ErrorCode01=").Append("NULL,");
+                sql.Append("ErrorDesc01=").Append("NULL,");
+                sql.Append("ErrorCode02=").Append("NULL,");
+                sql.Append("ErrorDesc02=").Append("NULL,");
+                sql.Append("ErrorCode03=").Append("NULL,");
+                sql.Append("ErrorDesc03=").Append("NULL,");
+                sql.Append("DateProcessed=GETDATE(),");
+                sql.Append("DateRated=GETDATE() ");
+                sql.Append("WHERE LoginId=").Append("'").Append(source).Append("' AND "); //source
+                sql.Append("QtyNumber=").Append(int.Parse(uniqueId)); //uniqueid
+
+
+                //WiseTools.logToFile(Config.logFile, "Starting saveResults", true);
+                SqlConnection conn = new SqlConnection(connString);
+                SqlCommand cmd = new SqlCommand(sql.ToString(), conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandTimeout = 300;
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
             }
-
-            cmd.Parameters.Add("@SubstitutedZip", SqlDbType.VarChar, 50).Value = substitutedZip;
-
-            if (ratesToSave.Count > 0)
+            catch (Exception ex)
             {
-                cmd.Parameters.Add("@ClassifiedResidential", SqlDbType.Bit).Value = (ratesToSave[0][4] == "2"); //If address classification is 2, then this was classified residential
+                throw ex;
             }
-            else
-            {
-                cmd.Parameters.Add("@ClassifiedResidential", SqlDbType.Bit).Value = false;
-            }
-
-            int loopNumber = 0;
-            foreach (string[] rateInfo in ratesToSave)
-            {
-                loopNumber++;
-                string loopString = loopNumber.ToString();
-                if (loopString.Length < 2) { loopString = "0" + loopString; }
-
-                if(rateInfo[5].Length > 200) { rateInfo[5] = rateInfo[5].Substring(0, 200); }
-
-                cmd.Parameters.Add("@Carrier" + loopString, SqlDbType.VarChar, 50).Value = rateInfo[0];
-                cmd.Parameters.Add("@Service" + loopString, SqlDbType.VarChar, 50).Value = rateInfo[3];
-                cmd.Parameters.Add("@Rate" + loopString, SqlDbType.Decimal).Value = decimal.Parse(rateInfo[2]);
-                cmd.Parameters.Add("@ServiceCode" + loopString, SqlDbType.VarChar, 50).Value = rateInfo[1];
-                cmd.Parameters.Add("@Note" + loopString, SqlDbType.VarChar, 200).Value = rateInfo[5];
-            }
-
-            while (loopNumber < 15)
-            {
-                loopNumber++;
-                string loopString = loopNumber.ToString();
-                if (loopString.Length < 2) { loopString = "0" + loopString; }
-
-                cmd.Parameters.Add("@Carrier" + loopString, SqlDbType.VarChar, 50).Value = DBNull.Value;
-                cmd.Parameters.Add("@Service" + loopString, SqlDbType.VarChar, 50).Value = DBNull.Value;
-                cmd.Parameters.Add("@Rate" + loopString, SqlDbType.Decimal).Value = DBNull.Value;
-                cmd.Parameters.Add("@ServiceCode" + loopString, SqlDbType.VarChar, 50).Value = DBNull.Value;
-                cmd.Parameters.Add("@Note" + loopString, SqlDbType.VarChar, 200).Value = DBNull.Value;
-            }
-
-
-            //WiseTools.logToFile(Config.logFile, "About to execute sql in saveResults", true);
-
-            conn.Open();
-            cmd.ExecuteNonQuery();
-            conn.Close();            
             
             //WiseTools.logToFile(Config.logFile, "Completed saveResults", true);
 
