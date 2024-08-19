@@ -60,21 +60,7 @@ namespace FreightEstApp35
         }
 
         public DataSet getPlantCharges(string carrier, int acctNumber)
-        {
-            /*
-            SqlConnection conn = new SqlConnection(connString);
-            string sql = "SELECT PlantCode, PerPackageCharge, PerShipmentCharge, NextDayAir, SecondDayAir, Ground, ThreeDaySelect, NextDayAirSaver, NextDayAirEarlyAM, SecondDayAirAM, Saver FROM PlantCarrierCharges WHERE CarrierId = @carrier ORDER BY PlantCode";
-
-            SqlCommand cmdCharges = new SqlCommand(sql, conn);
-            cmdCharges.CommandType = CommandType.Text;
-            cmdCharges.Parameters.Add("@carrier", SqlDbType.VarChar, 10).Value = carrier;
-
-            DataSet ds = new DataSet();
-            SqlDataAdapter da = new SqlDataAdapter(cmdCharges);
-            da.Fill(ds);
-
-            return (ds);
-            */
+        {          
 
             SqlConnection conn = new SqlConnection(connString);
             
@@ -92,22 +78,7 @@ namespace FreightEstApp35
 
             return (ds);
         }
-        /*
-        public DataSet getRequestsToProcess()
-        {
-            SqlConnection conn = new SqlConnection(connString);
-            string sql = "NOLONGERUSED";// "SELECT LoginId, QtyNumber, ToAddress, ToCity, ToState, ToZip, ToCountry, NumPackages, PkgWeight, LastPkgWeight FROM FreightRequests WHERE DateProcessed IS NULL AND DateRated IS NULL AND ISNULL(NumPackages,0) > 0 ORDER BY DateRequested ASC";
-            
-            SqlCommand cmd = new SqlCommand(sql, conn);
-            cmd.CommandType = CommandType.Text;
-
-            DataSet ds = new DataSet();
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            da.Fill(ds);
-
-            return (ds);
-        }
-        */
+        
 
         internal void saveResults(string source, string uniqueId, List<string[]> ratesToSave, Address toAddress)
         {
@@ -116,10 +87,6 @@ namespace FreightEstApp35
                 string substitutedZip = "";
                 bool _residential = false;
 
-                //if (toAddress.zip.IndexOf("-") < 0)
-                //{
-                //    substitutedZip = verifyAndCorrectZipCode(toAddress.city, toAddress.state, toAddress.zip);
-                //}
                 substitutedZip = toAddress.zip;
 
                 if (ratesToSave.Count > 0)
@@ -228,11 +195,7 @@ namespace FreightEstApp35
             try
             {
                 SqlConnection conn = new SqlConnection(connString);
-                //string sql = "SELECT @Abbrev = FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations ";
-                string sql = "SELECT @Abbrev = FreightAbbreviation FROM SUWDB03.UPSRate.dbo.FreightProviderAbbreviations ";
-                sql += "WHERE FreightProvider = @FreightProvider";
-
-                SqlCommand cmd = new SqlCommand(sql, conn);
+                SqlCommand cmd = new SqlCommand(Config.SQLProviderAbbriviations, conn);
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@FreightProvider", SqlDbType.VarChar, 100).Value = fullProvider;
@@ -298,11 +261,7 @@ namespace FreightEstApp35
             try
             {
                 SqlConnection conn = new SqlConnection(connString);
-                //string sql = "SELECT @Desc = FreightDesc FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations ";
-                string sql = "SELECT @Desc = FreightDesc FROM SUWDB03.UPSRate.dbo.FreightProviderAbbreviations ";
-                sql += "WHERE FreightProvider = @FreightProvider";
-
-                SqlCommand cmd = new SqlCommand(sql, conn);
+                SqlCommand cmd = new SqlCommand(Config.SQLProviderAbbriviations, conn);
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@FreightProvider", SqlDbType.VarChar, 100).Value = fullProvider;
@@ -329,10 +288,7 @@ namespace FreightEstApp35
             WiseTools.logToFile(Config.logFile, "Starting getFreightProviderInfo", true);
 
             SqlConnection conn = new SqlConnection(connString);
-            //string sql = "SELECT * FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations ORDER BY FreightProvider";
-            string sql = "SELECT * FROM SUWDB03.UPSRate.dbo.FreightProviderAbbreviations ORDER BY FreightProvider";
-
-            SqlCommand cmdProviders = new SqlCommand(sql, conn);
+            SqlCommand cmdProviders = new SqlCommand(Config.SQLProviderAbbriviations, conn);
             cmdProviders.CommandType = CommandType.Text;
 
             DataSet ds = new DataSet();

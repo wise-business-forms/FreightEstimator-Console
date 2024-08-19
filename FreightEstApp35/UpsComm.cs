@@ -163,6 +163,17 @@ namespace FreightEstApp35
             shipment.number_of_packages = this.numPackages;
             shipment.package_weight = this.pkgWeight;
             shipment.last_package_weight = this.lastPkgWeight;
+            shipment.pick_up_date = System.DateTime.Now;
+
+            // Calulate Billing weight
+            if (shipment.package_weight != shipment.last_package_weight)
+            {
+                int _fullPackages = shipment.number_of_packages - 1;
+                shipment.billing_weight = (shipment.package_weight * _fullPackages) + shipment.last_package_weight;
+            }
+            else { shipment.billing_weight = shipment.number_of_packages * shipment.package_weight; }
+
+            shipment.freight_class_selected = 55;
 
             #endregion
             try
@@ -194,17 +205,7 @@ namespace FreightEstApp35
                 string url = Config.TransPlaceUrl;
                 string token = Config.TransPlaceToken;
                 string fullPostData = "";
-                string pickupDate = "";
-
-                try
-                {
-                    DateTime datePickup = shipment.pick_up_date;
-                    pickupDate = datePickup.Year.ToString() + "-" + datePickup.Month.ToString() + "-" + datePickup.Day.ToString();
-                }
-                catch
-                {
-                    pickupDate = DateTime.Now.Year.ToString() + "-" + DateTime.Now.Month.ToString() + "-" + DateTime.Now.Day.ToString();
-                }
+                string pickupDate = shipment.pick_up_date.ToShortDateString();
                 string ltlClass = shipment.freight_class_selected.ToString();
 
                 #region -- Define dtLTLServices to hold rate data --
@@ -273,7 +274,7 @@ namespace FreightEstApp35
                     StringBuilder postData = new StringBuilder("<?xml version=\"1.0\"?>");
                     postData.Append("<quote>");
                     postData.Append("<requestedMode>LTL</requestedMode>");
-                    postData.Append("<requestedPickupDate>" + pickupDate + "</requestedPickupDate>");
+                    postData.Append("<requestedPickupDate>" + shipment.pick_up_date.ToString("yyyy-MM-dd") + "</requestedPickupDate>");
                     postData.Append("<shipper>");
                     postData.Append("<city>" + shipFromCity + "</city>");
                     postData.Append("<region>" + shipFromState + "</region>");
@@ -464,20 +465,12 @@ namespace FreightEstApp35
             }
             Console.WriteLine(sbResults.ToString());
 
-            #region Return results
-            ShopRateResponse shopRateResponse = new ShopRateResponse();
-            UPSRequest uPSRequest = new UPSRequest(shipment, new Plant(shipment.PlantId), UPSRequest.RequestOption.Shop);
-            uPSRequest.Response();
-            shopRateResponse.UPSServices = uPSRequest.UPSServices;
-
-            foreach (UPSService service in uPSRequest.UPSServices)
+            List<RateDetail> r = new List<RateDetail>();
+            foreach(var s in response.UPSServices)
             {
-                RateDetail rateDetail = new RateDetail(shipment.PlantId, service.ServiceName, 1, int.Parse(shipment.billing_weight.ToString()), false, Decimal.Parse(service.Rate), 0, 0, "UPS");
-                rates.Add(rateDetail);
+                rates.Add(new RateDetail("LTL", s.ServiceName, Decimal.Parse(s.Rate), "LTL"));
             }
-            #endregion
-
-            return (rates);
+                return rates;
         }
 
         private void handleError(string source, string details)

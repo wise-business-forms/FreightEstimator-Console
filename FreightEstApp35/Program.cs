@@ -11,15 +11,16 @@ namespace FreightEstApp35
     {
         static void Main(string[] args)
         {
-            WiseTools.logToFile(Config.logFile, "Launching application", true);
+            WiseTools.logToFile(Config.logFile, "Launching application: " + Config.ENVIRONMENT, true);
 
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
-            //testRoutine();
+            // Sets environment flag [PROD|DEBUG] based on host name.
+            Config.SetProdDebug();
+
             while (1 == 1)
             {
-                processNextRequest();
-                //Console.ReadKey();            
+                processNextRequest();        
             }
         }
 

@@ -301,7 +301,7 @@ namespace FreightEstApp35
                 rateInfo[0] = rate.basicProvider;
                 rateInfo[1] = rate.basicMethod;
                 rateInfo[2] = rate.basicRate.ToString();
-                rateInfo[3] = rate.serviceDesc.ToString();
+                //rateInfo[3] = rate.serviceDesc.ToString();
                 rateInfo[4] = rate.addressClassification.ToString(); // If value is 2, Residential is TRUE
                 if (rate.note == null)
                 {
@@ -318,9 +318,12 @@ namespace FreightEstApp35
 
             foreach (string[] rateInfo in ratesToSave)
             {
-                string basicProvider = rateInfo[1];
-                rateInfo[1] = abbreviateMethod(basicProvider);
-                rateInfo[3] = getMethodDesc(basicProvider);
+                if (rateInfo[5] != "LTL")
+                {
+                    string basicProvider = rateInfo[1];
+                    rateInfo[1] = abbreviateMethod(basicProvider);
+                    rateInfo[3] = getMethodDesc(basicProvider);
+                }
             }
 
             List<string[]> ratesToSaveAfterExclusions = new List<string[]>();
