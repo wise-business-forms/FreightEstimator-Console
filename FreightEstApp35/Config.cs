@@ -9,7 +9,7 @@ namespace FreightEstApp35
     public static class Config
     {
         // Toggleing between Prod and Test is based on host machine name.
-        static string HOST_PRODUCTION_WEB = "AZUREWEB10"; // If this is the host name it will run production settings.
+        static string HOST_PRODUCTION_WEB = "AZWEB10"; // If this is the host name it will run production settings.
         static string _ENVIRONMENT = String.Empty;
         
         static string _RemoteServerName = "SANDBOX";
