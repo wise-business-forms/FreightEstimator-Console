@@ -15,7 +15,7 @@ namespace FreightEstApp35
         static string _RemoteServerName = ConfigurationSettings.AppSettings.Get("RemoteServerName");
         static string _LogFile = "FreightEstApp35.log";
         #region Environment specific settings
-        static string _PROD_ConnString = "Data Source=192.168.4.50;Initial Catalog=UpsRate;uid=sa;pwd=95Montana!;Connection Timeout=300;"; // PRODUCTION
+        static string _PROD_ConnString = "Data Source=azuredb01\\azuredb01;Initial Catalog=UpsRate;uid=sa;pwd=95Montana!;Connection Timeout=300;"; // PRODUCTION
         static string _TEST_ConnString = "Server=azuredb01\\azuredb01;Initial Catalog=UpsRate;uid=sa;pwd=95Montana!!!;"; // TEST
 
         static string _PROD_SQLProviderAbbriviations = "SELECT @Abbrev = FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations WHERE FreightProvider = @FreightProvider";
