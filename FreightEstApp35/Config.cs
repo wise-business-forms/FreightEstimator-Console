@@ -12,7 +12,7 @@ namespace FreightEstApp35
         static string HOST_PRODUCTION_WEB = "AZWEB10"; // If this is the host name it will run production settings.
         static string _ENVIRONMENT = String.Empty;
         
-        static string _RemoteServerName = "SANDBOX";
+        static string _RemoteServerName = ConfigurationSettings.AppSettings.Get("RemoteServerName");
         static string _LogFile = "FreightEstApp35.log";
         #region Environment specific settings
         static string _PROD_ConnString = "Data Source=192.168.4.50;Initial Catalog=UpsRate;uid=sa;pwd=95Montana!;Connection Timeout=300;"; // PRODUCTION
