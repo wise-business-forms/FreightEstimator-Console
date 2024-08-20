@@ -11,15 +11,18 @@ namespace FreightEstApp35
         // Toggleing between Prod and Test is based on host machine name.
         static string HOST_PRODUCTION_WEB = "AZWEB10"; // If this is the host name it will run production settings.
         static string _ENVIRONMENT = String.Empty;
-        
+        [Obsolete]
         static string _RemoteServerName = ConfigurationSettings.AppSettings.Get("RemoteServerName");
         static string _LogFile = "FreightEstApp35.log";
-        #region Environment specific settings
-        static string _PROD_ConnString = "Data Source=azuredb01\\azuredb01;Initial Catalog=UpsRate;uid=sa;pwd=95Montana!;Connection Timeout=300;"; // PRODUCTION
-        static string _TEST_ConnString = "Server=azuredb01\\azuredb01;Initial Catalog=UpsRate;uid=sa;pwd=95Montana!!!;"; // TEST
 
-        static string _PROD_SQLProviderAbbriviations = "SELECT @Abbrev = FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations WHERE FreightProvider = @FreightProvider";
-        static string _TEST_SQLProviderAbbriviations = "SELECT @Abbrev = FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations WHERE FreightProvider = @FreightProvider";
+        #region Environment specific settings
+        [Obsolete]
+        static string _PROD_ConnString = "Server=" + ConfigurationSettings.AppSettings.Get("PROD_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationSettings.AppSettings.Get("PROD_User") + ";pwd=" + ConfigurationSettings.AppSettings.Get("PROD_Password") + "; Connection Timeout=300;"; // PRODUCTION
+        [Obsolete]
+        static string _TEST_ConnString = "Server=" + ConfigurationSettings.AppSettings.Get("TEST_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationSettings.AppSettings.Get("TEST_User") + ";pwd=" + ConfigurationSettings.AppSettings.Get("TEST_Password") + "; Connection Timeout=300;"; // TEST
+
+        static string _PROD_SQLProviderAbbriviations = "SELECT FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations";
+        static string _TEST_SQLProviderAbbriviations = "SELECT FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations";
 
         // UPS PRODUCTION ENDPOINTS
         static string _PROD_UPSAuthorizationURL = "https://onlinetools.ups.com/security/v1/oauth/authorize"; // PRODUCTION
@@ -33,6 +36,7 @@ namespace FreightEstApp35
         static string _TEST_UPSAddressValidationURL = "https://wwwcie.ups.com/api/addressvalidation/v1/3"; // TEST  {version}/{requestOption}
         static string _TEST_UPSShopRatesURL = "https://wwwcie.ups.com/api/rating/v2403/"; // TEST {version}/{requestoption}        
         #endregion
+
         static string _UPSAccessKey = "CC83ED82D080DC80";
         static string _UPSUserName = "WiseWebSupport";
         static string _UPSPassword = "Wise_forms";

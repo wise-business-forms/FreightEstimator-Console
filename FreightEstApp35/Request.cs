@@ -321,8 +321,8 @@ namespace FreightEstApp35
                 if (rateInfo[5] != "LTL")
                 {
                     string basicProvider = rateInfo[1];
-                    rateInfo[1] = abbreviateMethod(basicProvider);
-                    rateInfo[3] = getMethodDesc(basicProvider);
+                    rateInfo[1] = basicProvider; // abbreviateMethod(basicProvider);
+                    rateInfo[3] = basicProvider; // getMethodDesc(basicProvider);
                 }
             }
 
@@ -407,47 +407,38 @@ namespace FreightEstApp35
 
         private string abbreviateMethod(string fullMethod)
         {
-            //WiseTools.logToFile(Config.logFile, "Starting abbreviateMethod", true);
-            string shortMethod = "";
+            string shortMethod = string.Empty;
 
-            if(!ProviderInfo.freightAbbreviations.TryGetValue(fullMethod, out shortMethod))
+            // Translate the service name into UI format.
+            switch (fullMethod)
             {
-                // Translate the service name into UI format.
-                switch (fullMethod)
-                {
-                    case "UPSGround":
-                        shortMethod = "Ground";
-                        break;
-                    case "UPSNextDayAir":
-                        shortMethod = "Next Day Air";
-                        break;
-                    case "UPSNextDayAirEarlyAM":
-                        shortMethod = "Next Day Air Early A.M.";
-                        break;
-                    case "UPSNextDayAirSaver":
-                        shortMethod = "Next Day Air Saver";
-                        break;
-                    case "UPSSecondDayAir":
-                        shortMethod = "Second Day Air";
-                        break;
-                    case "UPS3DaySelect":
-                        shortMethod = "Three - Day Select";
-                        break;
-                    case "UPSGroundFreight":
-                        shortMethod = "UPS Ground Freight";
-                        break;
-                    default:
-                        shortMethod = fullMethod;
-                        break;
-                }
+                case "UPSGround":
+                    shortMethod = "Ground";
+                    break;
+                case "UPSNextDayAir":
+                    shortMethod = "Next Day Air";
+                    break;
+                case "UPSNextDayAirEarlyAM":
+                    shortMethod = "Next Day Air Early A.M.";
+                    break;
+                case "UPSNextDayAirSaver":
+                    shortMethod = "Next Day Air Saver";
+                    break;
+                case "UPSSecondDayAir":
+                    shortMethod = "Second Day Air";
+                    break;
+                case "UPS3DaySelect":
+                    shortMethod = "Three - Day Select";
+                    break;
+                case "UPSGroundFreight":
+                    shortMethod = "UPS Ground Freight";
+                    break;
+                default:
+                    shortMethod = fullMethod;
+                    break;
             }
-            
-            if (shortMethod == "")
-            {
-                WiseTools.logToFile(Config.logFile, "Provider abbreviation not found for " + fullMethod, true);
-            }
-            
-            //WiseTools.logToFile(Config.logFile, "Leaving abbreviateMethod", true);
+
+            WiseTools.logToFile(Config.logFile, "Provider abbreviation not found for " + fullMethod, true);
 
             return (shortMethod);
         }

@@ -287,7 +287,7 @@ namespace FreightEstApp35
 
             WiseTools.logToFile(Config.logFile, "Starting getFreightProviderInfo", true);
 
-            SqlConnection conn = new SqlConnection(connString);
+            SqlConnection conn = new SqlConnection(connString);            
             SqlCommand cmdProviders = new SqlCommand(Config.SQLProviderAbbriviations, conn);
             cmdProviders.CommandType = CommandType.Text;
 

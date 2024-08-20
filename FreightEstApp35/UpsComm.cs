@@ -91,46 +91,46 @@ namespace FreightEstApp35
                         RateDetail rateDetail = new RateDetail(shipment.PlantId, service.ServiceName, 1, int.Parse(shipment.billing_weight.ToString()), false, Decimal.Parse(service.Rate.Replace("$", "")), 0, 0, "UPS");
                     
                                     
-                    //RateDetail rateDetail = new RateDetail(shipment.PlantId, service.ServiceName, 1, int.Parse(shipment.billing_weight.ToString()), false, Decimal.Parse(service.Rate), 0, 0, "UPS");
-                    foreach (DataRow row in charges.Tables[0].Rows)
-                    {
-                        if (row["PlantCode"].ToString() == shipment.PlantId)
+                        //RateDetail rateDetail = new RateDetail(shipment.PlantId, service.ServiceName, 1, int.Parse(shipment.billing_weight.ToString()), false, Decimal.Parse(service.Rate), 0, 0, "UPS");
+                        foreach (DataRow row in charges.Tables[0].Rows)
                         {
-                            // Column names do not match service names.....
-                            var serviceName = string.Empty;
-                            switch (service.ServiceName)
+                            if (row["PlantCode"].ToString() == shipment.PlantId)
                             {
-                                case "UPSNextDayAir":
-                                    serviceName = "NextDayAir";
-                                    break;
-                                case "UPS2ndDayAir":
-                                    serviceName = "SecondDayAir";
-                                    break;
-                                case "UPSGround":
-                                    serviceName = "Ground";
-                                    break;
-                                case "UPS3DaySelect":
-                                    serviceName = "ThreeDaySelect";
-                                    break;
-                                case "NextDayAirSaver":
-                                    serviceName = "NextDayAirSaver";
-                                    break;
-                                case "NextDayAirEarlyAM":
-                                    serviceName = "NextDayAirEarlyAM";
-                                    break;
-                                case "SecondDayAirAM":
-                                    serviceName = "SecondDayAirAM";
-                                    break;
-                                case "UPSSaver":
-                                    serviceName = "Saver";
-                                    break;
-                            }
-                            rateDetail.serviceDesc = serviceName;
-                            rateDetail.totalCharges += Decimal.Parse(row[serviceName].ToString());
-                        };
+                                // Column names do not match service names.....
+                                var serviceName = string.Empty;
+                                switch (service.ServiceName)
+                                {
+                                    case "UPSNextDayAir":
+                                        serviceName = "NextDayAir";
+                                        break;
+                                    case "UPS2ndDayAir":
+                                        serviceName = "SecondDayAir";
+                                        break;
+                                    case "UPSGround":
+                                        serviceName = "Ground";
+                                        break;
+                                    case "UPS3DaySelect":
+                                        serviceName = "ThreeDaySelect";
+                                        break;
+                                    case "NextDayAirSaver":
+                                        serviceName = "NextDayAirSaver";
+                                        break;
+                                    case "NextDayAirEarlyAM":
+                                        serviceName = "NextDayAirEarlyAM";
+                                        break;
+                                    case "SecondDayAirAM":
+                                        serviceName = "SecondDayAirAM";
+                                        break;
+                                    case "UPSSaver":
+                                        serviceName = "Saver";
+                                        break;
+                                }
+                                rateDetail.serviceDesc = serviceName;
+                                rateDetail.totalCharges += Decimal.Parse(row[serviceName].ToString());
+                            };
                     
-                    }
-                    rates.Add(rateDetail);
+                        }
+                        rates.Add(rateDetail);
                     }
                     catch (Exception ex)
                     {
@@ -142,7 +142,7 @@ namespace FreightEstApp35
             return (rates);
         }
         
-        public List<RateDetail> getLTLRates()
+        public List<RateDetail> getLTLRates(UpsComm myUPS)
         {
             List<RateDetail> rates = new List<RateDetail>();
             StringBuilder sbResults = new StringBuilder();
@@ -174,6 +174,47 @@ namespace FreightEstApp35
             else { shipment.billing_weight = shipment.number_of_packages * shipment.package_weight; }
 
             shipment.freight_class_selected = 55;
+
+            // process the old accessorials format to the new model -  Though we do not use below. :)
+            foreach(string accessorial in myUPS.accessorials.Split(';'))
+            {
+                switch (accessorial)
+                {
+                    case "NOTIFY-BEFORE-DELIVERY":
+                        shipment.notify_before_delivery = true;
+                        break;
+                    case "LIFTGATE-PICKUP":
+                        shipment.liftgate_pickup = true;
+                        break;
+                    case "LIFTGATE-DELIVERY":
+                        shipment.liftgate_delivery = true;
+                        break;
+                    case "LIMITED-ACCESS-PICKUP":
+                        shipment.limited_access_pickup = true;
+                        break;
+                    case "LIMITED-ACCESS-DELIVERY;":
+                        shipment.limited_access_delivery = true;
+                        break;
+                    case "RESIDENTIAL-PICKUP;":
+                        shipment.residential_pickup = true;
+                        break;
+                    case "RESIDENTIAL-DELIVERY;":
+                        shipment.residential_delivery = true;
+                        break;
+                    case "INSIDE-PICKUP;":
+                        shipment.inside_pickup = true;
+                        break;
+                    case "INSIDE-DELIVERY;":
+                        shipment.inside_delivery = true;
+                        break;
+                    case "SORT-AND-SEGREGATE;":
+                        shipment.sort_and_segregate = true;
+                        break;
+                    case "STOPOFF-CHARGE;":
+                        shipment.stopoff_charge = true;
+                        break;
+                }
+            }
 
             #endregion
             try
@@ -295,7 +336,8 @@ namespace FreightEstApp35
                     postData.Append("</lineItem>");
                     postData.Append("</lineItems>");
 
-                    string accessorials = GetLTLAccessorials(shipment);
+                    //string accessorials = GetLTLAccessorials(shipment);
+                    string accessorials = myUPS.accessorials;
                     if (accessorials.Length > 0)
                     {
                         postData.Append("<accessorials>");
@@ -511,8 +553,11 @@ namespace FreightEstApp35
             uPSRequest.Response();
             shopRateResponse.UPSServices = uPSRequest.UPSServices;
 
+
             foreach (UPSService service in uPSRequest.UPSServices)
             {
+                service.Rate = RateCalculations.CalculateRate(shipment.AcctNum, shipment.PlantId, "UPSGroundFreight", service.Rate, service.CWTRate, shipment.number_of_packages, shipment.package_weight.ToString(), shipment.last_package_weight.ToString()); // Should use CWT not ServiceName for cleanliness.
+                service.Rate = service.Rate.Replace("$", "");
                 RateDetail rateDetail = new RateDetail(shipment.PlantId, service.ServiceName, 1, int.Parse(shipment.billing_weight.ToString()), false, Decimal.Parse(service.Rate), 0, 0, "UPS");
                 rates.Add(rateDetail);
             }

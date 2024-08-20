@@ -117,7 +117,7 @@ namespace FreightEstApp35
                             if (myRequest.requestLTL)
                             {
                                 WiseTools.logToFile(Config.logFile, "Requesting LTL rates", true);
-                                ltlRates = myUPS.getLTLRates();
+                                ltlRates = myUPS.getLTLRates(myUPS);
 
                                 foreach (RateDetail rate in ltlRates)
                                 {
@@ -157,7 +157,7 @@ namespace FreightEstApp35
                     catch (Exception err)
                     {
                         //WRITE ERROR TO REQUEST
-                        myRequest.writeError("GENERAL", "Error processing request.");
+                        myRequest.writeError("GENERAL", "Error processing request." + err.Message);
                         WiseTools.logToFile(Config.logFile, "General error encountered: " + err.ToString(), true);
                     }
                 }
@@ -230,7 +230,7 @@ namespace FreightEstApp35
                     Console.WriteLine(rate.basicProvider + " " + rate.basicMethod + " " + rate.basicRate.ToString());
                 }
                 */
-                List<RateDetail> ltlRates = myUPS.getLTLRates();
+                List<RateDetail> ltlRates = myUPS.getLTLRates(myUPS);
                 foreach (RateDetail rate in ltlRates)
                 {
                     Console.WriteLine(rate.basicProvider + " " + rate.basicMethod + " " + rate.basicRate.ToString());
