@@ -44,6 +44,10 @@ namespace FreightEstApp35
 
                     try
                     {
+                        Console.WriteLine("Number of Packages: " + myRequest.numPackages);
+                        Console.WriteLine("Package weight: " + myRequest.pkgWeight);
+                        Console.WriteLine("Last Package weight: " + myRequest.lastPkgWeight);
+                        Console.WriteLine("Plant: " + myRequest.fromPlant);
 
                         WiseTools.logToFile(Config.logFile, "Beginning UPS address validation", true);
                         

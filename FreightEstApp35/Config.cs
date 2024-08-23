@@ -31,10 +31,16 @@ namespace FreightEstApp35
         static string _PROD_UPSShopRatesURL = "https://onlinetools.ups.com/api/rating/v2403/"; // PRODUCTION {version}/{requestoption}        
 
         // UPS TEST ENDPOINTS
-        static string _TEST_UPSAuthorizationURL = "https://wwwcie.ups.com/security/v1/oauth/authorize"; // TEST
-        static string _TEST_UPSGenerateTokenURL = "https://wwwcie.ups.com/security/v1/oauth/token"; // TEST
-        static string _TEST_UPSAddressValidationURL = "https://wwwcie.ups.com/api/addressvalidation/v1/3"; // TEST  {version}/{requestOption}
-        static string _TEST_UPSShopRatesURL = "https://wwwcie.ups.com/api/rating/v2403/"; // TEST {version}/{requestoption}        
+        static string _TEST_UPSAuthorizationURL = "https://onlinetools.ups.com/security/v1/oauth/authorize"; // PRODUCTION
+        static string _TEST_UPSGenerateTokenURL = "https://onlinetools.ups.com/security/v1/oauth/token"; // PRODUCTION
+        static string _TEST_UPSAddressValidationURL = "https://onlinetools.ups.com/api/addressvalidation/v1/3"; //  PRODUCTION  {version}/{requestOption}
+        static string _TEST_UPSShopRatesURL = "https://onlinetools.ups.com/api/rating/v2403/"; // PRODUCTION {version}/{requestoption}    
+        
+        // UPS OFFICIAL ENDPOINTS
+        //static string _TEST_UPSAuthorizationURL = "https://wwwcie.ups.com/security/v1/oauth/authorize"; // TEST
+        //static string _TEST_UPSGenerateTokenURL = "https://wwwcie.ups.com/security/v1/oauth/token"; // TEST
+        //static string _TEST_UPSAddressValidationURL = "https://wwwcie.ups.com/api/addressvalidation/v1/3"; // TEST  {version}/{requestOption}
+        //static string _TEST_UPSShopRatesURL = "https://wwwcie.ups.com/api/rating/v2403/"; // TEST {version}/{requestoption}        
         #endregion
 
         static string _UPSAccessKey = "CC83ED82D080DC80";
