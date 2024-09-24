@@ -330,8 +330,15 @@ namespace FreightEstApp35
                     break;
             }
 
+            if (cwt && serviceName == "UPSGround" || serviceName == "SecondDayAirAM")
+            {
+                total = hundredWeightAdjustment;
+                total += perShipmentCharge;
+                total += (perPackageCharge * noPackages);
+                total += (markup / 100) * hundredWeightAdjustment;
+            }
             // Hundred weight adjustment
-            if (cwt && serviceName != "UPSGroundFreight" && serviceName != "NextDayAirEarlyAM")
+            else if (cwt && serviceName != "UPSGroundFreight" && serviceName != "NextDayAirEarlyAM")
             {
                 total = hundredWeightAdjustment;
                 total += perShipmentCharge;

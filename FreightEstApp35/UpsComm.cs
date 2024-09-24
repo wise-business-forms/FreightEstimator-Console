@@ -420,6 +420,7 @@ namespace FreightEstApp35
                         totalCharges = cost;
                         if (dUpchargeLTL[plantCode] > 0) { totalCharges += ((dUpchargeLTL[plantCode] / 100) * cost); }
                         if (perPackageCharge > 0) { totalCharges += (perPackageCharge * shipment.number_of_packages); }
+                        totalCharges += perShipmentCharge;
 
                         results.Append("Calculated total charge is " + totalCharges.ToString() + "\n\n");
 
@@ -510,7 +511,7 @@ namespace FreightEstApp35
             List<RateDetail> r = new List<RateDetail>();
             foreach(var s in response.UPSServices)
             {
-                rates.Add(new RateDetail("LTL", s.ServiceName, Decimal.Parse(s.Rate), "LTL"));
+                rates.Add(new RateDetail("LTL", s.ServiceName, Decimal.Parse(s.TotalCost), "LTL"));
             }
                 return rates;
         }

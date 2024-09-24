@@ -9,7 +9,8 @@ namespace FreightEstApp35
     public static class Config
     {
         //static string _ConnString = "Data Source=192.168.4.50;Initial Catalog=UpsRate;uid=sa;pwd=95Montana!;Connection Timeout=300;"; // PRODUCTION
-        static string _ConnString = "Server=azuredb01\\azuredb01;Initial Catalog=UpsRate;uid=sa;pwd=95Montana!!!;"; // TEST
+        //        static string _ConnString = "Server=azuredb01\\azuredb01;Initial Catalog=UpsRate;uid=sa;pwd=95Montana!!!;"; // TEST
+        static string _ConnString = "Server=SANDBOX;Initial Catalog=CostPlus;uid=sa;pwd=95Montana!;"; // TEST
 
         static string _RemoteServerName = ConfigurationSettings.AppSettings.Get("RemoteServerName");
         static string _LogFile = ConfigurationSettings.AppSettings.Get("LogFileName");
