@@ -269,32 +269,16 @@ namespace FreightEstApp35
             replacements.Add("Next Day Air", "NDA");
         }
 
-        public void saveResults(List<RateDetail> rates, List<RateDetail> ltlRates)
+        public void saveResults(List<RateDetail> upsRates, List<RateDetail> ltlRates)
         {
-
             WiseTools.logToFile(Config.logFile, "Beginning saveResults", true);
 
             List<string[]> ratesToSave = new List<string[]>();
+            int maxResultsGUICanShow = 15;
             //buildReplacementDictionary();
-            
+
             //WiseTools.logToFile(Config.logFile, "Replacement Dictionary has been built", true);
 
-            foreach (RateDetail rate in rates)
-            {
-                string[] rateInfo = new string[6];
-                rateInfo[0] = rate.basicProvider;
-                rateInfo[1] = rate.basicMethod;
-                rateInfo[2] = rate.basicRate.ToString();
-                rateInfo[3] = rate.serviceDesc.ToString();
-                rateInfo[4] = rate.addressClassification.ToString(); // If value is 2, Residential is TRUE
-                rateInfo[5] = ""; // no note on UPS rates
-                ratesToSave.Add(rateInfo);
-            }
-
-
-            //WiseTools.logToFile(Config.logFile, "UPS rates added to ratesToSave", true);
-
-            
             foreach (RateDetail rate in ltlRates)
             {
                 string[] rateInfo = new string[6];
@@ -311,10 +295,33 @@ namespace FreightEstApp35
                 {
                     rateInfo[5] = rate.note;
                 }
-                ratesToSave.Add(rateInfo);
+
+                // We need to save a space for UPS Ground.
+                if(ratesToSave.Count < maxResultsGUICanShow - 1) 
+                    ratesToSave.Add(rateInfo);
             }
 
             //WiseTools.logToFile(Config.logFile, "LTL rates added to ratesToSave", true);
+
+            // Order ratesToSave by the second column (index 1)
+            upsRates = upsRates.OrderBy(x => x.basicRate).ToArray().ToList();
+
+            foreach (RateDetail rate in upsRates)
+            {
+                string[] rateInfo = new string[6];
+                rateInfo[0] = rate.basicProvider;
+                rateInfo[1] = rate.basicMethod;
+                rateInfo[2] = rate.basicRate.ToString();
+                rateInfo[3] = rate.serviceDesc.ToString();
+                rateInfo[4] = rate.addressClassification.ToString(); // If value is 2, Residential is TRUE
+                rateInfo[5] = ""; // no note on UPS rates
+                ratesToSave.Add(rateInfo);
+            }
+
+            
+
+
+            //WiseTools.logToFile(Config.logFile, "UPS rates added to ratesToSave", true);
 
             foreach (string[] rateInfo in ratesToSave)
             {
@@ -335,12 +342,15 @@ namespace FreightEstApp35
                 }
             }
 
+            // Order and trim results
+            List<string[]> ratesToSaveAfterOrderAndTrim = ratesToSaveAfterExclusions.Take(maxResultsGUICanShow).ToList();
+
             WiseTools.logToFile(Config.logFile, "ratesToSave processed - about to initialize new DBUtil", true);
 
             DBUtil db = new DBUtil();
 
             //WiseTools.logToFile(Config.logFile, "DBUtil initialized - about to call saveResults", true);
-            db.saveResults(source, uniqueId, ratesToSaveAfterExclusions, toAddress);
+            db.saveResults(source, uniqueId, ratesToSaveAfterOrderAndTrim, toAddress);
 
             WiseTools.logToFile(Config.logFile, "Completed saveResults", true);
 

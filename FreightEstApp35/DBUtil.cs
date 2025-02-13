@@ -12,42 +12,20 @@ namespace FreightEstApp35
     {
         string connString = Config.ConnString;
 
-        public DBUtil()
-        {
-        }
-
         public DataSet getNextRequestFromQueue()
         {
-            //WiseTools.logToFile(Config.logFile, "getNextRequestFromQueue", true);
             SqlConnection conn = new SqlConnection(connString);
-            //SqlCommand cmd = new SqlCommand("getNextRequestFromQueue", conn);
-            //cmd.CommandType = CommandType.StoredProcedure;
-
-            string sqlTempFix = "UPDATE " + Config.RemoteServerName + ".CostPlus.dbo.FreightRequests SET FromCity = 'Fort Wayne' WHERE FromCity = 'Ft Wayne'";
-            //string sqlTempFix = "UPDATE UPSRATE.dbo.FreightRequests_" + Config.RemoteServerName + " SET FromCity = 'Fort Wayne' WHERE FromCity = 'Ft Wayne'";
-
-            SqlCommand cmdTempFix = new SqlCommand(sqlTempFix, conn);
-            cmdTempFix.CommandType = CommandType.Text;
-            conn.Open();
-            cmdTempFix.ExecuteNonQuery();
-            conn.Close();
-
-
             string sql = "SELECT TOP 1 LoginId, QtyNumber, ToAddress, ToCity, ToState, ToZip, ToCountry, FromAddress, ";
-            //    FromCity, ";
             sql += "CASE WHEN FromCity = 'Ft Wayne' THEN 'Fort Wayne' ELSE FromCity END as FromCity, ";
             sql += "FromState, FromZip, FromCountry, NumPackages, PkgWeight, LastPkgWeight, RequestUPS, RequestLTL, FreightClass, ";
             sql += "PickupDate, NotifyBeforeDelivery, LiftgatePickup, LiftgateDelivery, LimitedAccessPickup, LimitedAccessDelivery, ";
             sql += "ResidentialPickup, ResidentialDelivery, InsidePickup, InsideDelivery, SortAndSegregate, StopoffCharge, DateRequested, ";
 			sql += "DateProcessed, AcctNumber, ShipWithArray ";
             sql += "FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightRequests ";
-            //sql += "FROM UPSRATE.dbo.FreightRequests_" + Config.RemoteServerName + " ";
-
-
-            sql += "WHERE (DateProcessed IS NULL OR DateRated IS NULL) ";//and loginid ='smacphail' ";
+            sql += "WHERE (DateProcessed IS NULL OR DateRated IS NULL) ";
             sql += "AND ISNULL(NumPackages,0) > 0 ";
             sql += "ORDER BY DateRequested ASC";
-
+                        
             SqlCommand cmd = new SqlCommand(sql, conn);
             cmd.CommandType = CommandType.Text;
 
@@ -55,7 +33,7 @@ namespace FreightEstApp35
 
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(ds);
-
+            
             return (ds);
         }
 
@@ -97,7 +75,7 @@ namespace FreightEstApp35
                 {
                     _residential = false;
                 }
-
+                
                 StringBuilder sql = new StringBuilder("UPDATE ");
                 sql.Append(Config.RemoteServerName);
                 sql.Append(".CostPlus.dbo.FreightRequests SET ");
@@ -143,6 +121,7 @@ namespace FreightEstApp35
                 sql.Append("DateRated=GETDATE() ");
                 sql.Append("WHERE LoginId=").Append("'").Append(source).Append("' AND "); //source
                 sql.Append("QtyNumber=").Append(int.Parse(uniqueId)); //uniqueid
+                //sql.Append("DateRequested >= DATEADD(MINUTE, -1, GETDATE());");
 
 
                 //WiseTools.logToFile(Config.logFile, "Starting saveResults", true);

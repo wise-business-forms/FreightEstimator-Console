@@ -9,7 +9,7 @@ namespace FreightEstApp35
     public static class Config
     {
         // Toggleing between Prod and Test is based on host machine name.
-        static string HOST_PRODUCTION_WEB = "AZWEB10"; // If this is the host name it will run production settings.
+        static string HOST_PRODUCTION_WEB = "SUWWEB05"; // If this is the host name it will run production settings.
         static string _ENVIRONMENT = String.Empty;
         [Obsolete]
         static string _RemoteServerName = ConfigurationSettings.AppSettings.Get("RemoteServerName");
@@ -101,11 +101,25 @@ namespace FreightEstApp35
 
         static string _TransPlaceDemoToken = "8Hhk8etqxs94gEtj0JpVxl90qoINDfMAiemh84XbGNM%3D";
         //static string _TransPlaceProdToken = "jLDnfupyBDGy%2FnF2zYs4g5Zl0%2B7g7TBLPIwBuNfAVhc%3D";
-        static string _TransPlaceProdToken = "jLDnfupyBDGy%2FnF2zYs4gxMB78GTlIAytU2dzN4xQLdVWNGGmkNOl%2B9N%2BU6aO4vP";
-        
+        //static string _TransPlaceProdToken = "jLDnfupyBDGy%2FnF2zYs4gxMB78GTlIAytU2dzN4xQLdVWNGGmkNOl%2B9N%2BU6aO4vP";
+        static string _TransPlaceProdToken = "5-uLjricmzgb6N66P6PC9uUveqSx9dkDns031KSlSVBl2GrAl-5JVOgGMG72-2Lu";
+
         static bool _TransPlaceDemoMode = false;
+
+        // PRODUCTION
+        static string _TransportationInsightDemoUrl = "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp";
+        static string _TransportationInsightProdUrl = "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp";
+        static string _TransprtationInsightApiUsername = "WiseWS";
+        static string _TransprtationInsightApiPassword = "DwWfTbgjHF9fTFQeL8";
+        static bool _TransprtationInsightDemoMode = false;
+
+        // DEFVELOPMENT
+        //static string _TransportationInsightDemoUrl = "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp";
+        //static string _TransprtationInsightApiUsername = "WiseWSTest"; // Development
+        //static string _TransprtationInsightApiPassword = "cRfx2PBt8SEAZFwjK3"; // Development
+        //static bool _TransprtationInsightDemoMode = true;
         #endregion
-        
+
         static Config() {
             populatePlantNames();
         }
@@ -117,7 +131,7 @@ namespace FreightEstApp35
         public static void SetProdDebug()
         {
             string hostServerName = Environment.MachineName;
-            if(hostServerName == HOST_PRODUCTION_WEB)
+            //if(hostServerName == HOST_PRODUCTION_WEB)
             {
                 _ENVIRONMENT = "PRODUCTION";
                 _UPSAuthorizationURL = _PROD_UPSAuthorizationURL;
@@ -127,16 +141,24 @@ namespace FreightEstApp35
                 _ConnString = _PROD_ConnString;
                 _SQLProviderAbbriviations = _PROD_SQLProviderAbbriviations;
             }
-            else
-            {
-                _ENVIRONMENT = "DEBUG";
-                _UPSAuthorizationURL = _TEST_UPSAuthorizationURL;
-                _UPSGenerateTokenURL = _TEST_UPSGenerateTokenURL;
-                _UPSAddressValidationURL = _TEST_UPSAddressValidationURL;
-                _UPSShopRatesURL = _TEST_UPSShopRatesURL;
-                _ConnString = _TEST_ConnString;
-                _SQLProviderAbbriviations = _TEST_SQLProviderAbbriviations;
-            }
+            //else
+            //{
+            //    _ENVIRONMENT = "DEBUG";
+            //    _UPSAuthorizationURL = _TEST_UPSAuthorizationURL;
+            //    _UPSGenerateTokenURL = _TEST_UPSGenerateTokenURL;
+            //    _UPSAddressValidationURL = _TEST_UPSAddressValidationURL;
+            //    _UPSShopRatesURL = _TEST_UPSShopRatesURL;
+            //    _ConnString = _TEST_ConnString;
+            //    _SQLProviderAbbriviations = _TEST_SQLProviderAbbriviations;
+            //}
+
+            Console.WriteLine("Environment: " + _ENVIRONMENT);
+            Console.WriteLine("UPSAuthorizationURL: " + _UPSAuthorizationURL);
+            Console.WriteLine("UPSGenerateTokenURL: " + _UPSGenerateTokenURL);
+            Console.WriteLine("UPSAddressValidationURL: " + _UPSAddressValidationURL);
+            Console.WriteLine("UPSShopRatesURL: " + _UPSShopRatesURL);
+            Console.WriteLine("ConnString: " + _ConnString);
+            Console.WriteLine("SQLProviderAbbriviations: " + _SQLProviderAbbriviations);
         }
 
 
@@ -314,5 +336,35 @@ namespace FreightEstApp35
             }
         }
 
+        public static string TransportationInsightUrl
+        {
+            get
+            {
+                if (_TransprtationInsightDemoMode)
+                {
+                    return _TransportationInsightDemoUrl;
+                }
+                else
+                {
+                    return _TransportationInsightProdUrl;
+                }
+            }
+        }
+
+        public static string TransprtationInsightApiUsername
+        {
+            get
+            {
+                return _TransprtationInsightApiUsername;
+            }
+        }
+
+        public static string TransprtationInsightApiPassword
+        {
+            get
+            {
+                return _TransprtationInsightApiPassword;
+            }
+        }
     }
 }

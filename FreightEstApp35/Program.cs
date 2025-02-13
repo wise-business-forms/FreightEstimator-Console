@@ -12,11 +12,12 @@ namespace FreightEstApp35
         static void Main(string[] args)
         {
             WiseTools.logToFile(Config.logFile, "Launching application: " + Config.ENVIRONMENT, true);
-
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-
+            Console.WriteLine("Launching application: " + Config.ENVIRONMENT);
+            //System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+            //Console.WriteLine("Security Protocol configured.");
             // Sets environment flag [PROD|DEBUG] based on host name.
-            Config.SetProdDebug();
+            Console.WriteLine("Set Prod/Debug Flag.");
+            Config.SetProdDebug();            
 
             while (1 == 1)
             {
@@ -51,66 +52,65 @@ namespace FreightEstApp35
 
                         WiseTools.logToFile(Config.logFile, "Beginning UPS address validation", true);
                         
-                        UpsComm myUPS = new UpsComm();
+                        UpsComm rates = new UpsComm();
 
-                        myUPS.toValidate = myRequest.toAddress;
-                        myUPS.fromRate = myRequest.fromAddress;
+                        rates.toValidate = myRequest.toAddress;
+                        rates.fromRate = myRequest.fromAddress;
 
-                        myUPS.ltlClass = myRequest.freightClass;
-                        myUPS.deliveryConfCode = 0;// myRequest.signatureRequired ? 1 : 0;
-                        myUPS.pickupDate = DateTime.Parse(myRequest.pickupDate);
-                        myUPS.plantCode = myRequest.fromPlant;
+                        rates.ltlClass = myRequest.freightClass;
+                        rates.deliveryConfCode = 0;// myRequest.signatureRequired ? 1 : 0;
+                        rates.pickupDate = DateTime.Parse(myRequest.pickupDate);
+                        rates.plantCode = myRequest.fromPlant;
 
-                        myUPS.packageWeights = myRequest.packageWeights;
+                        rates.packageWeights = myRequest.packageWeights;
 
                         if (myRequest.packageWeights.Count == 0)
                         {
-                            myUPS.numPackages = myRequest.numPackages;
-                            myUPS.pkgWeight = myRequest.pkgWeight;
-                            myUPS.lastPkgWeight = myRequest.lastPkgWeight;
+                            rates.numPackages = myRequest.numPackages;
+                            rates.pkgWeight = myRequest.pkgWeight;
+                            rates.lastPkgWeight = myRequest.lastPkgWeight;
                         } 
                         else
                         {
                             //myUPS.numPackages = myRequest.packageWeights.Count;
                             //myUPS.pkgWeight = 0;
                             //myUPS.lastPkgWeight = 0;
-                            myUPS.numPackages = myRequest.numPackages;
-                            myUPS.pkgWeight = myRequest.pkgWeight;
-                            myUPS.lastPkgWeight = myRequest.lastPkgWeight;
+                            rates.numPackages = myRequest.numPackages;
+                            rates.pkgWeight = myRequest.pkgWeight;
+                            rates.lastPkgWeight = myRequest.lastPkgWeight;
                         }
 
-                        myUPS.accessorials = myRequest.accessorials;
+                        rates.accessorials = myRequest.accessorials;
 
-                        myUPS.acctNumber = myRequest.acctNumber;
+                        rates.acctNumber = myRequest.acctNumber;
 
-                        List<Address> candidates = myUPS.validateAddress();
+                        List<Address> candidates = rates.validateAddress();
 
                         if (candidates.Count <= 1)
                         {
                             if (candidates.Count == 1)
                             {
-                                myUPS.toRate = candidates[0];
+                                rates.toRate = candidates[0];
 
                                 WiseTools.logToFile(Config.logFile, "Address corrected", true);
                             }
                             else
                             {
-                                myUPS.toRate = myRequest.toAddress;
+                                rates.toRate = myRequest.toAddress;
 
                                 WiseTools.logToFile(Config.logFile, "Entered address being used", true);
                             }
 
-                            List<RateDetail> rates = new List<RateDetail>();
+                            List<RateDetail> upsRates = new List<RateDetail>();
                             List<RateDetail> groundFreightRates = new List<RateDetail>();
                             List<RateDetail> ltlRates = new List<RateDetail>();
 
                             if (myRequest.requestUPS)
                             {
-
                                 WiseTools.logToFile(Config.logFile, "Requesting UPS rates", true);
-                                rates = myUPS.getRates();
+                                upsRates = rates.getRates();
 
-                                foreach (RateDetail rate in rates)
+                                foreach (RateDetail rate in upsRates)
                                 {
                                     Console.WriteLine(rate.basicProvider + " " + rate.basicMethod + " " + rate.basicRate.ToString());
                                 }
@@ -120,31 +120,30 @@ namespace FreightEstApp35
                             
                             if (myRequest.requestLTL)
                             {
-                                WiseTools.logToFile(Config.logFile, "Requesting LTL rates", true);
-                                ltlRates = myUPS.getLTLRates(myUPS);
-
-                                foreach (RateDetail rate in ltlRates)
-                                {
-                                    Console.WriteLine(rate.basicProvider + " " + rate.basicMethod + " " + rate.basicRate.ToString() + " " + rate.note);
-                                }
-
-                                WiseTools.logToFile(Config.logFile, "Done with LTL rates", true);
-
                                 WiseTools.logToFile(Config.logFile, "Requesting UPS Ground Freight rates", true);
-                                groundFreightRates = myUPS.getGroundFreightRates();
+                                groundFreightRates = rates.getGroundFreightRates();
 
                                 foreach (RateDetail rate in groundFreightRates)
                                 {
                                     Console.WriteLine(rate.basicProvider + " " + rate.basicMethod + " " + rate.basicRate.ToString() + " " + rate.note);
                                     ltlRates.Add(rate);
                                 }
-
                                 WiseTools.logToFile(Config.logFile, "Done with UPS Ground Freight rates", true);
+
+                                WiseTools.logToFile(Config.logFile, "Requesting LTL rates", true);                                                                
+
+                                foreach (RateDetail rate in rates.getLTLRates_TransportationInsight(rates))
+                                {
+                                    Console.WriteLine(rate.basicProvider + " " + rate.basicMethod + " " + rate.basicRate.ToString() + " " + rate.note);
+                                    ltlRates.Add(rate);
+                                }
+
+                                WiseTools.logToFile(Config.logFile, "Done with LTL rates", true);
                             }
 
                             Console.WriteLine("Address: " + myRequest.toAddress.street);
                             //WiseTools.logToFile(Config.logFile, "About to call routine to save results", true);
-                            myRequest.saveResults(rates, ltlRates);
+                            myRequest.saveResults(upsRates, ltlRates);
 
                             //WiseTools.logToFile(Config.logFile, "Back from routine that saves results", true);
 
@@ -161,7 +160,7 @@ namespace FreightEstApp35
                     catch (Exception err)
                     {
                         //WRITE ERROR TO REQUEST
-                        myRequest.writeError("GENERAL", "Error processing request." + err.Message);
+                        myRequest.writeError("GENERAL", "Error processing request: processNextRequest() " + err.Message);
                         WiseTools.logToFile(Config.logFile, "General error encountered: " + err.ToString(), true);
                     }
                 }
@@ -234,7 +233,8 @@ namespace FreightEstApp35
                     Console.WriteLine(rate.basicProvider + " " + rate.basicMethod + " " + rate.basicRate.ToString());
                 }
                 */
-                List<RateDetail> ltlRates = myUPS.getLTLRates(myUPS);
+                //List<RateDetail> ltlRates = myUPS.getLTLRates(myUPS);
+                List<RateDetail> ltlRates = myUPS.getLTLRates_TransportationInsight(myUPS);
                 foreach (RateDetail rate in ltlRates)
                 {
                     Console.WriteLine(rate.basicProvider + " " + rate.basicMethod + " " + rate.basicRate.ToString());

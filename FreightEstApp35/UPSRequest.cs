@@ -173,28 +173,31 @@ namespace FreightEstApp35
                 dynamic data = JObject.Parse(_response);
 
                 JToken services = data.SelectToken("RateResponse.RatedShipment");
-                if (services.Type == JTokenType.Array)
-                {
-                    // Check for each key's existence and assign values accordingly
-                    var serviceIndex = 0;
-                    List<UPSService> serviceSort = new List<UPSService>();
-                    foreach (var service in services)
+                    if (services != null)
                     {
-                        serviceSort.Add(ParseUPSService(service));
-                        serviceIndex++;
+                        if (services.Type == JTokenType.Array)
+                        {
+                            // Check for each key's existence and assign values accordingly
+                            var serviceIndex = 0;
+                            List<UPSService> serviceSort = new List<UPSService>();
+                            foreach (var service in services)
+                            {
+                                serviceSort.Add(ParseUPSService(service));
+                                serviceIndex++;
+                            }
+
+                            // Remove extra (null) UPS Services values slots from the array.
+                            serviceSort.RemoveAll(service => service == null);
+
+                            _uPSServices = serviceSort.ToArray();
+                        }
+                        else
+                        {
+                            List<UPSService> serviceSort = new List<UPSService>();
+                            serviceSort.Add(ParseUPSService(services));
+                            return serviceSort.ToArray();
+                        }
                     }
-
-                    // Remove extra (null) UPS Services values slots from the array.
-                    serviceSort.RemoveAll(service => service == null);
-
-                    _uPSServices = serviceSort.ToArray();
-                }
-                else
-                {
-                    List<UPSService> serviceSort = new List<UPSService>();
-                    serviceSort.Add(ParseUPSService(services));
-                    return serviceSort.ToArray();
-                }
             }
             catch (Exception ex)
             {
