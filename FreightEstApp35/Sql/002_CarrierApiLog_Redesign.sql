@@ -6,7 +6,7 @@
 -- Changes: API-agnostic LTL logging, removed M33 legacy code, renamed table
 
 -- Step 1: Archive the current table
-ALTER TABLE dbo.CarrierApiLog RENAME TO CarrierApiLog_Archive;
+EXEC sp_rename 'dbo.CarrierApiLog', 'CarrierApiLog_Archive';
 
 -- Step 2: Create new FreightEstimatorCarrierApiLog table with redesigned schema
 CREATE TABLE dbo.FreightEstimatorCarrierApiLog (

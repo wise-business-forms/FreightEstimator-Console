@@ -13,7 +13,7 @@
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'FreightEstimatorCarrierApiLog' AND schema_id = SCHEMA_ID('dbo'))
    AND NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'FreightEstimatorCarrierApiLog_Archive' AND schema_id = SCHEMA_ID('dbo'))
 BEGIN
-    ALTER TABLE dbo.FreightEstimatorCarrierApiLog RENAME TO FreightEstimatorCarrierApiLog_Archive;
+    EXEC sp_rename 'dbo.FreightEstimatorCarrierApiLog', 'FreightEstimatorCarrierApiLog_Archive';
 END
 GO
 
