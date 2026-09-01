@@ -58,6 +58,8 @@ namespace FreightEstApp35
                         
                         UpsComm rates = new UpsComm();
 
+                        rates.CorrelationId = myRequest.source + "-" + myRequest.uniqueId;
+
                         rates.toValidate = myRequest.toAddress;
                         rates.fromRate = myRequest.fromAddress;
 

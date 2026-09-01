@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FreightEstApp35\FreightEstApp35.csproj" />
+  </ItemGroup>
+
 </Project>

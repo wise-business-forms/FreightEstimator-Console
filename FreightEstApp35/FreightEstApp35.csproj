@@ -113,9 +113,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Address.cs" />
+    <Compile Include="CarrierApiCall.cs" />
+    <Compile Include="CarrierApiLogger.cs" />
+    <Compile Include="CarrierRateQuote.cs" />
+    <Compile Include="CarrierRateQuoteBuilder.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="DBUtil.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="Plant.cs" />
     <Compile Include="PlantCharges.cs" />
     <Compile Include="Program.cs" />
@@ -159,6 +162,9 @@
     </None>
     <None Include="FreightEstApp35_TemporaryKey.pfx" />
     <None Include="packages.config" />
+    <None Include="Sql\001_CreateCarrierApiLog.sql" />
+    <None Include="Sql\002_CarrierApiLog_Redesign.sql" />
+    <None Include="Sql\003_CarrierApiCallQuote.sql" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
