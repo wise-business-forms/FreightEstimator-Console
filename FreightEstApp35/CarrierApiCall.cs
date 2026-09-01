@@ -27,6 +27,7 @@ namespace FreightEstApp35
         public DateTime RequestedAtUtc { get; set; }
         public DateTime? RespondedAtUtc { get; set; }
         public int? DurationMs { get; set; }
+        public bool IsTest { get; set; }
         public List<CarrierRateQuote> Quotes { get; set; } = new List<CarrierRateQuote>();
     }
 }

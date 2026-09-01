@@ -83,12 +83,12 @@ INSERT INTO dbo.CarrierApiCall
     (CorrelationId, Application, ApiProvider, ShippingMode, Operation, PlantCode, AccountNumber,
      ShipToAddress, ShipToCity, ShipToState, ShipToZip, ShipToCountry,
      RequestUrl, HttpStatusCode, IsSuccess, ErrorMessage, RequestBody, ResponseBody,
-     RequestedAtUtc, RespondedAtUtc, DurationMs)
+     RequestedAtUtc, RespondedAtUtc, DurationMs, IsTest)
 VALUES
     (@CorrelationId, @Application, @ApiProvider, @ShippingMode, @Operation, @PlantCode, @AccountNumber,
      @ShipToAddress, @ShipToCity, @ShipToState, @ShipToZip, @ShipToCountry,
      @RequestUrl, @HttpStatusCode, @IsSuccess, @ErrorMessage, @RequestBody, @ResponseBody,
-     @RequestedAtUtc, @RespondedAtUtc, @DurationMs);
+     @RequestedAtUtc, @RespondedAtUtc, @DurationMs, @IsTest);
 SELECT CAST(SCOPE_IDENTITY() AS BIGINT);";
 
             cmd.Parameters.Add("@CorrelationId", SqlDbType.VarChar, 100).Value = (object)call.CorrelationId ?? DBNull.Value;
@@ -112,8 +112,107 @@ SELECT CAST(SCOPE_IDENTITY() AS BIGINT);";
             cmd.Parameters.Add("@RequestedAtUtc", SqlDbType.DateTime2).Value = call.RequestedAtUtc;
             cmd.Parameters.Add("@RespondedAtUtc", SqlDbType.DateTime2).Value = (object)call.RespondedAtUtc ?? DBNull.Value;
             cmd.Parameters.Add("@DurationMs", SqlDbType.Int).Value = (object)call.DurationMs ?? DBNull.Value;
+            cmd.Parameters.Add("@IsTest", SqlDbType.Bit).Value = call.IsTest;
 
             return (long)cmd.ExecuteScalar();
+        }
+
+        /// <summary>
+        /// Reads back the persisted rows for a CorrelationId - used by the Carrier Test Harness
+        /// to prove a Test Call's rows actually made it into the database, since LogApiCall/
+        /// LogQuotes deliberately swallow write failures rather than propagate them.
+        /// </summary>
+        public static List<CarrierApiCall> GetCallsByCorrelationId(string correlationId)
+        {
+            var calls = new List<CarrierApiCall>();
+
+            using (SqlConnection conn = new SqlConnection(Config.ConnString))
+            {
+                conn.Open();
+
+                SqlCommand callCmd = conn.CreateCommand();
+                callCmd.CommandType = CommandType.Text;
+                callCmd.CommandText = @"
+SELECT Id, CorrelationId, Application, ApiProvider, ShippingMode, Operation, PlantCode, AccountNumber,
+       ShipToAddress, ShipToCity, ShipToState, ShipToZip, ShipToCountry,
+       RequestUrl, HttpStatusCode, IsSuccess, ErrorMessage, RequestBody, ResponseBody,
+       RequestedAtUtc, RespondedAtUtc, DurationMs, IsTest
+FROM dbo.CarrierApiCall
+WHERE CorrelationId = @CorrelationId
+ORDER BY Id;";
+                callCmd.Parameters.Add("@CorrelationId", SqlDbType.VarChar, 100).Value = correlationId;
+
+                using (SqlDataReader reader = callCmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        calls.Add(new CarrierApiCall
+                        {
+                            Id = (long)reader["Id"],
+                            CorrelationId = reader["CorrelationId"] as string,
+                            Application = reader["Application"] as string,
+                            ApiProvider = reader["ApiProvider"] as string,
+                            ShippingMode = reader["ShippingMode"] as string,
+                            Operation = reader["Operation"] as string,
+                            PlantCode = reader["PlantCode"] as string,
+                            AccountNumber = reader["AccountNumber"] as string,
+                            ShipToAddress = reader["ShipToAddress"] as string,
+                            ShipToCity = reader["ShipToCity"] as string,
+                            ShipToState = reader["ShipToState"] as string,
+                            ShipToZip = reader["ShipToZip"] as string,
+                            ShipToCountry = reader["ShipToCountry"] as string,
+                            RequestUrl = reader["RequestUrl"] as string,
+                            HttpStatusCode = reader["HttpStatusCode"] as int?,
+                            IsSuccess = (bool)reader["IsSuccess"],
+                            ErrorMessage = reader["ErrorMessage"] as string,
+                            RequestBody = reader["RequestBody"] as string,
+                            ResponseBody = reader["ResponseBody"] as string,
+                            RequestedAtUtc = (DateTime)reader["RequestedAtUtc"],
+                            RespondedAtUtc = reader["RespondedAtUtc"] as DateTime?,
+                            DurationMs = reader["DurationMs"] as int?,
+                            IsTest = (bool)reader["IsTest"]
+                        });
+                    }
+                }
+
+                SqlCommand quoteCmd = conn.CreateCommand();
+                quoteCmd.CommandType = CommandType.Text;
+                quoteCmd.CommandText = @"
+SELECT Id, CarrierApiCallId, CarrierName, ServiceLevel, BaseCost, MarkupPercent,
+       PerPackageCharge, PerShipmentCharge, TotalCharge, Currency, TransitDays
+FROM dbo.CarrierRateQuote
+WHERE CarrierApiCallId = @CarrierApiCallId
+ORDER BY Id;";
+                var callIdParam = quoteCmd.Parameters.Add("@CarrierApiCallId", SqlDbType.BigInt);
+
+                foreach (CarrierApiCall call in calls)
+                {
+                    callIdParam.Value = call.Id;
+
+                    using (SqlDataReader reader = quoteCmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            call.Quotes.Add(new CarrierRateQuote
+                            {
+                                Id = (long)reader["Id"],
+                                CarrierApiCallId = (long)reader["CarrierApiCallId"],
+                                CarrierName = reader["CarrierName"] as string,
+                                ServiceLevel = reader["ServiceLevel"] as string,
+                                BaseCost = reader["BaseCost"] as decimal?,
+                                MarkupPercent = reader["MarkupPercent"] as decimal?,
+                                PerPackageCharge = reader["PerPackageCharge"] as decimal?,
+                                PerShipmentCharge = reader["PerShipmentCharge"] as decimal?,
+                                TotalCharge = (decimal)reader["TotalCharge"],
+                                Currency = reader["Currency"] as string,
+                                TransitDays = reader["TransitDays"] as int?
+                            });
+                        }
+                    }
+                }
+            }
+
+            return calls;
         }
 
         private static void InsertQuotes(SqlConnection conn, SqlTransaction tx, long carrierApiCallId, IEnumerable<CarrierRateQuote> quotes)

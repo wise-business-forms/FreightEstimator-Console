@@ -36,6 +36,7 @@ namespace FreightEstApp35
         public int acctNumber { get; set; }
 
         public string CorrelationId { get; set; }
+        public bool IsTest { get; set; }
 
         public UpsComm()
         {
@@ -58,6 +59,7 @@ namespace FreightEstApp35
             #region Build out shipment information.
             Shipment shipment = new Shipment();
             shipment.CorrelationId = this.CorrelationId;
+            shipment.IsTest = this.IsTest;
             shipment.PlantId = this.plantCode;
             // Ship To info
             shipment.Address = toValidate.street;
@@ -125,6 +127,7 @@ namespace FreightEstApp35
             #region Build out shipment information.
             Shipment shipment = new Shipment();
             shipment.CorrelationId = this.CorrelationId;
+            shipment.IsTest = this.IsTest;
             shipment.PlantId = this.plantCode;
             // Ship To info
             shipment.Address = toValidate.street;
@@ -218,8 +221,7 @@ namespace FreightEstApp35
                 }
                 #endregion
 
-                string url = Config.TransPlaceUrl;
-                string token = Config.TransPlaceToken;
+                (string url, string token) = CarrierTestRouting.ResolveTransPlace(shipment.IsTest);
                 string pickupDate = shipment.pick_up_date.ToShortDateString();
                 string ltlClass = shipment.freight_class_selected.ToString();
 
@@ -470,6 +472,7 @@ namespace FreightEstApp35
                     CarrierApiLogger.LogApiCall(new CarrierApiCall
                     {
                         CorrelationId = shipment.CorrelationId,
+                        IsTest = shipment.IsTest,
                         ApiProvider = "TransPlace",
                         ShippingMode = "LTL",
                         Operation = "Quote",
@@ -527,6 +530,7 @@ namespace FreightEstApp35
             #region Build out shipment information.
             Shipment shipment = new Shipment();
             shipment.CorrelationId = this.CorrelationId;
+            shipment.IsTest = this.IsTest;
             shipment.PlantId = this.plantCode;
             // Ship To info
             shipment.Address = toValidate.street;
@@ -747,6 +751,8 @@ namespace FreightEstApp35
 
                     _request = postData.ToString();
 
+                    string transportationInsightUrl = CarrierTestRouting.ResolveTransportationInsight(shipment.IsTest);
+
                     DateTime requestedAtUtc = DateTime.UtcNow;
                     var stopwatch = System.Diagnostics.Stopwatch.StartNew();
                     string responseFromServer = null;
@@ -756,7 +762,7 @@ namespace FreightEstApp35
 
                     try
                     {
-                        WebRequest request = WebRequest.Create(Config.TransportationInsightUrl);
+                        WebRequest request = WebRequest.Create(transportationInsightUrl);
                         request.ContentType = "application/x-www-form-urlencoded";
                         request.Method = "POST";
 
@@ -873,6 +879,7 @@ namespace FreightEstApp35
                     CarrierApiLogger.LogApiCall(new CarrierApiCall
                     {
                         CorrelationId = shipment.CorrelationId,
+                        IsTest = shipment.IsTest,
                         ApiProvider = "TransportationInsight",
                         ShippingMode = "LTL",
                         Operation = "Quote",
@@ -883,7 +890,7 @@ namespace FreightEstApp35
                         ShipToState = shipment.State_selection,
                         ShipToZip = shipment.Zip,
                         ShipToCountry = shipment.Country_selection,
-                        RequestUrl = Config.TransportationInsightUrl,
+                        RequestUrl = transportationInsightUrl,
                         HttpStatusCode = statusCode,
                         IsSuccess = callSucceeded,
                         ErrorMessage = callErrorMessage,
@@ -933,6 +940,7 @@ namespace FreightEstApp35
             #region Build out shipment information.
             Shipment shipment = new Shipment();
             shipment.CorrelationId = this.CorrelationId;
+            shipment.IsTest = this.IsTest;
             shipment.PlantId = this.plantCode;
             // Ship To info
             shipment.Address = toValidate.street;

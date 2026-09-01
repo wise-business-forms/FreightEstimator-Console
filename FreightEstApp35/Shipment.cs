@@ -65,6 +65,7 @@ namespace FreightEstApp35
 
         // Logging
         public string CorrelationId { get; set; }
+        public bool IsTest { get; set; }
         public string requestMessage { get; set; }
         public string responseMessage { get; set; }
         public string results { get; set; }

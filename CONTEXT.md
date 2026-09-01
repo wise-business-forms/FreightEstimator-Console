@@ -26,3 +26,9 @@ One priced service line returned within a single Carrier API Call (e.g. one UPS 
 
 **Plant**:
 A shipping origin location, identified by PlantCode, used as the ship-from address for a rate request.
+
+**Test Call**:
+A Carrier API Call deliberately triggered for testing rather than a real customer shipment, marked by the `IsTest` flag. UPS has no available sandbox for the REST Rating API this app uses, so a UPS Test Call still hits production UPS — `IsTest` is the only thing distinguishing it from real traffic. TransPlace and TransportationInsight Test Calls route to their real sandbox/demo endpoints instead of production.
+
+**Carrier Test Harness**:
+A standalone tool, separate from the always-running production request-processing service, used to trigger one shipment request on demand and inspect the resulting Carrier API Call/Carrier Rate Quote rows. Every request through it is a Test Call.

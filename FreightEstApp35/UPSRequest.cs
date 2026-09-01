@@ -116,6 +116,7 @@ namespace FreightEstApp35
                     LastCarrierApiCallId = CarrierApiLogger.LogApiCall(new CarrierApiCall
                     {
                         CorrelationId = _shipment.CorrelationId,
+                        IsTest = _shipment.IsTest,
                         ApiProvider = "UPS",
                         ShippingMode = "Parcel",
                         Operation = _requestOption.ToString(),
@@ -251,6 +252,7 @@ namespace FreightEstApp35
                 CarrierApiLogger.LogApiCall(new CarrierApiCall
                 {
                     CorrelationId = _shipment.CorrelationId,
+                    IsTest = _shipment.IsTest,
                     ApiProvider = "UPS",
                     ShippingMode = "Parcel",
                     Operation = _requestOption + "-ParseError",

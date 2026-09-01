@@ -104,20 +104,18 @@ namespace FreightEstApp35
         //static string _TransPlaceProdToken = "jLDnfupyBDGy%2FnF2zYs4gxMB78GTlIAytU2dzN4xQLdVWNGGmkNOl%2B9N%2BU6aO4vP";
         static string _TransPlaceProdToken = "5-uLjricmzgb6N66P6PC9uUveqSx9dkDns031KSlSVBl2GrAl-5JVOgGMG72-2Lu";
 
-        static bool _TransPlaceDemoMode = false;
-
         // PRODUCTION
         static string _TransportationInsightDemoUrl = "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp";
         static string _TransportationInsightProdUrl = "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp";
         static string _TransprtationInsightApiUsername = "WiseWS";
         static string _TransprtationInsightApiPassword = "DwWfTbgjHF9fTFQeL8";
-        static bool _TransprtationInsightDemoMode = false;
 
-        // DEFVELOPMENT
+        // DEFVELOPMENT - restore these (and use them from the demo/test path) once WBF has real
+        // TransportationInsight test credentials; today _TransportationInsightDemoUrl above is
+        // identical to the prod URL, so a Test Call authenticates with prod credentials regardless.
         //static string _TransportationInsightDemoUrl = "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp";
         //static string _TransprtationInsightApiUsername = "WiseWSTest"; // Development
         //static string _TransprtationInsightApiPassword = "cRfx2PBt8SEAZFwjK3"; // Development
-        //static bool _TransprtationInsightDemoMode = true;
         #endregion
 
         static Config() {
@@ -307,49 +305,14 @@ namespace FreightEstApp35
         }
 
 
-        public static string TransPlaceUrl
-        {
-            get
-            {
-                if (_TransPlaceDemoMode)
-                {
-                    return _TransPlaceDemoUrl;
-                }
-                else
-                {
-                    return _TransPlaceProdUrl;
-                }
-            }
-        }
-        public static string TransPlaceToken
-        {
-            get
-            {
-                if (_TransPlaceDemoMode)
-                {
-                    return _TransPlaceDemoToken;
-                }
-                else
-                {
-                    return _TransPlaceProdToken;
-                }
-            }
-        }
-
-        public static string TransportationInsightUrl
-        {
-            get
-            {
-                if (_TransprtationInsightDemoMode)
-                {
-                    return _TransportationInsightDemoUrl;
-                }
-                else
-                {
-                    return _TransportationInsightProdUrl;
-                }
-            }
-        }
+        // Raw prod/demo values - which one to use for a given call is a per-request decision
+        // (see CarrierTestRouting), not a static app-wide toggle.
+        // Url and Token always travel together for a given environment, so they're bundled
+        // into one value rather than four separate properties a caller has to re-pair.
+        public static (string Url, string Token) TransPlaceProdEndpoint { get { return (_TransPlaceProdUrl, _TransPlaceProdToken); } }
+        public static (string Url, string Token) TransPlaceDemoEndpoint { get { return (_TransPlaceDemoUrl, _TransPlaceDemoToken); } }
+        public static string TransportationInsightProdUrl { get { return _TransportationInsightProdUrl; } }
+        public static string TransportationInsightDemoUrl { get { return _TransportationInsightDemoUrl; } }
 
         public static string TransprtationInsightApiUsername
         {
