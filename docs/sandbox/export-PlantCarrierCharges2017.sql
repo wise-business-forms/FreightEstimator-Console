@@ -2,7 +2,7 @@
 -- that loads production's PlantCarrierCharges2017 rows into SANDBOX. It selects from that one table and
 -- changes nothing, so it is safe on production.
 --
---   sqlcmd -S <prod server> -d UpsRate -U <sql login> -h -1 -y 0 -s "|" -i export-PlantCarrierCharges2017.sql -o load-PlantCarrierCharges2017.sql
+--   sqlcmd -S <prod server> -d UpsRate -U <sql login> -h -1 -W -w 8000 -i export-PlantCarrierCharges2017.sql -o load-PlantCarrierCharges2017.sql
 --
 -- Review load-PlantCarrierCharges2017.sql, then run it on SANDBOX in UpsRate. It refuses to run anywhere
 -- else, and it REPLACES SANDBOX's existing rows in that table with production's (all in one transaction).
@@ -12,7 +12,7 @@ SET NOCOUNT ON;
 
 SELECT line
 FROM (
-    SELECT 0 AS part, 0 AS k, CAST(N'-- Load of production PlantCarrierCharges2017 into SANDBOX. Generated; review before running.' AS nvarchar(max)) AS line
+    SELECT 0 AS part, 0 AS k, CAST(N'-- Load of production PlantCarrierCharges2017 into SANDBOX. Generated; review before running.' AS nvarchar(4000)) AS line
     UNION ALL SELECT 0, 1, N'SET XACT_ABORT ON;'
     UNION ALL SELECT 0, 2, N'IF @@SERVERNAME <> ''SANDBOX'' THROW 50040, ''Refusing to run: not connected to SANDBOX.'', 1;'
     UNION ALL SELECT 0, 3, N'IF DB_NAME() <> ''UpsRate'' THROW 50041, ''Refusing to run: connect to the UpsRate database.'', 1;'
