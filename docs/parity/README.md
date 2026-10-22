@@ -30,3 +30,15 @@ The harness prints its connection string, including the password, to stdout at s
 - TransPlace's sandbox host returns HTTP 404 for every quote call.
 - UPS rejects the 4 x 300 lb ground-freight rating in `ltl-heavy` with HTTP 400.
 - UPS rejects the invalid address in `invalid-address` with HTTP 400, which is the expected error path.
+
+## Testing the published single-file exe against the SANDBOX queue
+
+The harness exercises the net10 code, not the published `FreightEstApp35.exe`. To test the real artifact:
+
+1. `dotnet publish FreightEstApp35 -p:PublishProfile=SelfContainedSingleFile`, then copy `FreightEstApp35\bin\publish\` to a scratch folder (never edit the tracked output).
+2. Edit the scratch copy's `FreightEstApp35.dll.config` so `RemoteServerName`, `PROD_Server` and `TEST_Server` are all `SANDBOX` (with the SANDBOX credentials). Check this before launching: the exe polls `<RemoteServerName>.CostPlus.dbo.FreightRequests` in a loop and writes results back, so a leftover production value would process the real queue.
+3. Insert the fictitious rows with `queue-test-rows.sql` (UPS-only; see the header for why).
+4. Run the exe with output redirected to a file (it prints its connection string at startup). Each request logs its Carrier API Calls to `UpsRate` with `IsTest = 0`, because the queue path is not a Test Call.
+5. Stop the exe when the rows have `DateProcessed` and `DateRated` set. Note it will also drain any other pending SANDBOX row; check the queue first (`WHERE (DateProcessed IS NULL OR DateRated IS NULL) AND ISNULL(NumPackages,0) > 0`).
+
+Result on 2026-10-22: the exe read `FreightEstApp35.dll.config`, connected to SANDBOX, processed all four rows, called UPS, and wrote the rates back. The saved service-level rates for rows 1-3 are identical to the net48 harness baseline; row 4 logged the same UPS 400 as the baseline's `invalid-address`. Not exercised: `VerifyAndCorrect_PO_ZipCode` (the proc exists only in production `UpsRate`; the app swallows its absence), the LTL path, and a host with no .NET installed.
