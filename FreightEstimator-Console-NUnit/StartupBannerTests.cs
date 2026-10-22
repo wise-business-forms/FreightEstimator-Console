@@ -18,7 +18,9 @@ namespace FreightEstimator_Console_NUnit
             {
                 Version = "1.2.3.4",
                 StartedAt = new System.DateTime(2026, 10, 22, 14, 5, 0),
-                MachineName = "SUWWEB05",
+                MachineName = "DEV-LAPTOP",
+                Mode = RunMode.Test,
+                ModeReason = "DEV-LAPTOP is not a configured production host",
                 Plant = "ALP - Alpharetta (linked server ALPERP)",
                 CarrierLogDb = DbEndpoint.FromConnectionString(connString),
                 RequestQueue = "ALPERP.CostPlus",
@@ -57,6 +59,30 @@ namespace FreightEstimator_Console_NUnit
             Assert.That(text, Does.Contain("tms.transplace.com"));
             Assert.That(text, Does.Contain(".NET 10.0.1"));
             Assert.That(text, Does.Contain("1.2.3.4"));
+        }
+
+        [Test]
+        public void Render_TestMode_ShowsModeMachineAndReason()
+        {
+            string text = StartupBanner.Render(SampleInfo());
+
+            Assert.That(text, Does.Contain("TEST MODE"));
+            Assert.That(text, Does.Contain("DEV-LAPTOP"));
+            Assert.That(text, Does.Contain("DEV-LAPTOP is not a configured production host"));
+        }
+
+        [Test]
+        public void Render_ProductionHost_ShowsProductionHost()
+        {
+            StartupInfo info = SampleInfo();
+            info.Mode = RunMode.Production;
+            info.ModeReason = "PRODHOST01 is a configured production host";
+
+            string text = StartupBanner.Render(info);
+
+            Assert.That(text, Does.Contain("PRODUCTION HOST"));
+            Assert.That(text, Does.Not.Contain("TEST MODE"));
+            Assert.That(text, Does.Contain("PRODHOST01 is a configured production host"));
         }
 
         [Test]

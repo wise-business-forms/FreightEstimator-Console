@@ -45,6 +45,8 @@ namespace FreightEstApp35
         public string Version { get; set; }
         public DateTime StartedAt { get; set; }
         public string MachineName { get; set; }
+        public RunMode Mode { get; set; }
+        public string ModeReason { get; set; }
         public string Plant { get; set; }
         public DbEndpoint CarrierLogDb { get; set; }
         public string RequestQueue { get; set; }
@@ -90,6 +92,8 @@ namespace FreightEstApp35
                 Version = Assembly.GetExecutingAssembly().GetName().Version.ToString(),
                 StartedAt = DateTime.Now,
                 MachineName = Environment.MachineName,
+                Mode = Config.Resolution.Mode,
+                ModeReason = Config.Resolution.Reason,
                 Plant = DescribePlant(remote, Config.PlantNames),
                 CarrierLogDb = DbEndpoint.FromConnectionString(Config.ConnString),
                 RequestQueue = remote + ".CostPlus",
@@ -159,6 +163,8 @@ namespace FreightEstApp35
             Row(sb, "Version", info.Version);
             Row(sb, "Started", info.StartedAt.ToString("yyyy-MM-dd HH:mm:ss"));
             Row(sb, "Machine", info.MachineName);
+            Row(sb, "Mode", info.Mode == RunMode.Test ? "TEST MODE" : "PRODUCTION HOST");
+            Row(sb, "Why", info.ModeReason);
             Row(sb, "Plant", info.Plant);
 
             Section(sb, "Databases written to");
