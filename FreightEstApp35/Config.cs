@@ -16,10 +16,12 @@ namespace FreightEstApp35
         static string _LogFile = "FreightEstApp35.log";
 
         #region Environment specific settings
+        // Microsoft.Data.SqlClient defaults to Encrypt=true; these match the old System.Data.SqlClient behavior (see ADR 0003).
+        const string SqlSecurityOptions = "Encrypt=False;TrustServerCertificate=True;";
         [Obsolete]
-        static string _PROD_ConnString = "Server=" + ConfigurationManager.AppSettings.Get("PROD_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationManager.AppSettings.Get("PROD_User") + ";pwd=" + ConfigurationManager.AppSettings.Get("PROD_Password") + "; Connection Timeout=300;Encrypt=False;TrustServerCertificate=True;"; // PRODUCTION
+        static string _PROD_ConnString = "Server=" + ConfigurationManager.AppSettings.Get("PROD_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationManager.AppSettings.Get("PROD_User") + ";pwd=" + ConfigurationManager.AppSettings.Get("PROD_Password") + "; Connection Timeout=300;" + SqlSecurityOptions; // PRODUCTION
         [Obsolete]
-        static string _TEST_ConnString = "Server=" + ConfigurationManager.AppSettings.Get("TEST_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationManager.AppSettings.Get("TEST_User") + ";pwd=" + ConfigurationManager.AppSettings.Get("TEST_Password") + "; Connection Timeout=300;Encrypt=False;TrustServerCertificate=True;"; // TEST
+        static string _TEST_ConnString = "Server=" + ConfigurationManager.AppSettings.Get("TEST_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationManager.AppSettings.Get("TEST_User") + ";pwd=" + ConfigurationManager.AppSettings.Get("TEST_Password") + "; Connection Timeout=300;" + SqlSecurityOptions; // TEST
 
         static string _PROD_SQLProviderAbbriviations = "SELECT FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations";
         static string _TEST_SQLProviderAbbriviations = "SELECT FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations";
