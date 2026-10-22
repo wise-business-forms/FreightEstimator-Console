@@ -1,23 +1,32 @@
 # Parity check: net48 baseline vs net10 build
 
-Proves the upgraded app produces the same Carrier Rate Quotes as the old one, using the Carrier Test Harness as the single seam (see `docs/adr/0003-net10-self-contained-in-place-cutover.md`). Every request is a Test Call (`IsTest`): TransPlace and TransportationInsight go to their sandboxes, and UPS calls hit production UPS with fictitious shipments (ADR 0002).
+Proves the upgraded app produces the same Carrier Rate Quotes as the old one, using the Carrier Test Harness as the single seam (see `docs/adr/0003-net10-self-contained-in-place-cutover.md`). Every request is a Test Call (`IsTest`): TransPlace and TransportationInsight go to their sandbox hosts, and UPS calls hit production UPS with fictitious shipments (ADR 0002).
 
 ## Files
 
-- `requests.json` — the fixed, fictitious request set (UPS parcel, UPS ground freight and LTL, accessorials, one error case).
-- `Run-Parity.ps1` — `capture` saves the harness responses; `compare` re-runs the same requests (same pickup date) and diffs the logged quotes, ignoring ids and timings. It also fails if any logged call is not flagged `IsTest`, and lists the host each provider's calls went to so you can confirm LTL hit sandbox hosts.
+- `requests.json` — the fixed, fictitious request set (UPS parcel, UPS ground freight and LTL, accessorials, one invalid-address case). Ship-from plants are limited to ALP, BUT, FTW and POR, the only plants the app supports (`Config._PlantCodes` / `_PlantNames`); any other plant code fails with "key not present in the dictionary".
+- `Run-Parity.ps1` — `capture` saves the harness responses; `compare` re-runs the same requests (same pickup date) and diffs the logged quotes, ignoring ids and timings. It fails on a harness `processingError`, an empty call log, or any logged call not flagged `IsTest`, and lists the host each provider's calls went to so you can confirm LTL hit sandbox hosts.
+- `sandbox-setup.sql` — creates the `UpsRate` database on the SANDBOX server (reference data copied from `CostPlus`).
+- `results/` — saved results of a run, with the TransPlace `loginToken` redacted. Rates move, so these are a dated snapshot, not a permanent baseline: re-capture before comparing on another day.
 
 ## Procedure
 
-1. **Point the harness at the SANDBOX database.** `Config.SetProdDebug()` always uses the `PROD_*` settings, so edit the settings in the harness's *build-output* config copy (never the tracked `App.config`): `PROD_Server`, `PROD_User`, `PROD_Password`, and `RemoteServerName` (the linked server that exposes `CostPlus.dbo.FreightProviderAbbreviations`). SANDBOX needs the `UpsRate` database with the `Sql/001`–`004` migrations applied.
-2. **Baseline (net48).** Build the harness from the last net48 commit (`7f5d539`, master before the upgrade) and start it. The output config is `CarrierTestHarness.exe.config`.
+1. **SANDBOX database.** Apply `sandbox-setup.sql`, then `FreightEstApp35/Sql/003_CarrierApiCallQuote.sql` and `004_CarrierApiCall_IsTest.sql` (001/002 are superseded by 003 and not needed on a fresh database). The linked-server name for the provider abbreviations is `SANDBOX` itself.
+2. **Point the harness at SANDBOX.** `Config.SetProdDebug()` always uses the `PROD_*` settings, so edit the settings in the harness's *build-output* config copy (never the tracked `App.config`): `PROD_Server`, `PROD_User`, `PROD_Password` (and the `TEST_*` equivalents, to be safe) and `RemoteServerName=SANDBOX`.
+3. **Baseline (net48).** Build the harness from the last net48 commit (`7f5d539`, master before the upgrade) and start it. The output config is `CarrierTestHarness.exe.config`. The old project's build output is missing four package DLLs it references (`System.Runtime.CompilerServices.Unsafe`, `Microsoft.Bcl.AsyncInterfaces`, `System.Text.Encodings.Web`, `System.Threading.Tasks.Extensions`); copy them from `packages/` next to the exe or UPS token requests fail.
    ```powershell
    .\Run-Parity.ps1 -Mode capture -OutDir .\out\net48 -Label net48
    ```
-3. **Upgraded build (net10).** Build the harness from the upgrade branch and start it. The output config is `CarrierTestHarness.dll.config`.
+4. **Upgraded build (net10).** Stop the net48 harness (only one can hold port 5085), build the harness from the upgrade branch, and start it. The output config is `CarrierTestHarness.dll.config`.
    ```powershell
    .\Run-Parity.ps1 -Mode compare -BaselineDir .\out\net48 -OutDir .\out\net10 -Label net10
    ```
-4. Run steps 2 and 3 on the same day, close together; carrier rates can move. A mismatch is reported per request with the differing quote lines.
+5. Run steps 3 and 4 on the same day, close together. A mismatch is reported per request with the differing quote lines.
 
-The harness listens on `http://localhost:5085/` and only one instance can run at a time, so stop the net48 harness before starting the net10 one.
+The harness prints its connection string, including the password, to stdout at startup. Redirect its output to a file when running it unattended.
+
+## Known sandbox behavior (identical in both builds)
+
+- TransPlace's sandbox host returns HTTP 404 for every quote call.
+- UPS rejects the 4 x 300 lb ground-freight rating in `ltl-heavy` with HTTP 400.
+- UPS rejects the invalid address in `invalid-address` with HTTP 400, which is the expected error path.

@@ -1,0 +1,28 @@
+{
+    "correlationId":  "parity-net48-invalid-address-20261022133123",
+    "processingError":  null,
+    "upsRates":  [
+
+                 ],
+    "ltlRates":  [
+
+                 ],
+    "loggedCalls":  [
+                        {
+                            "Id":  24,
+                            "ApiProvider":  "UPS",
+                            "ShippingMode":  "Parcel",
+                            "Operation":  "Shop",
+                            "PlantCode":  "ALP",
+                            "IsSuccess":  false,
+                            "IsTest":  true,
+                            "HttpStatusCode":  400,
+                            "ErrorMessage":  "The remote server returned an error: (400) Bad Request.",
+                            "DurationMs":  1306,
+                            "RequestUrl":  "https://onlinetools.ups.com/api/rating/v2403/Shop",
+                            "Quotes":  [
+
+                                       ]
+                        }
+                    ]
+}

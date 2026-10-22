@@ -14,7 +14,7 @@
     "body": {
       "toAddress": { "street": "200 Parity Test Ave", "city": "Dallas", "state": "TX", "zip": "75201", "country": "US" },
       "requestUPS": true, "requestLTL": false,
-      "fromPlant": "ALP", "numPackages": 5, "pkgWeight": 40, "lastPkgWeight": 25
+      "fromPlant": "FTW", "numPackages": 5, "pkgWeight": 40, "lastPkgWeight": 25
     }
   },
   {
@@ -23,7 +23,7 @@
     "body": {
       "toAddress": { "street": "300 Parity Test Ct", "city": "Portland", "state": "OR", "zip": "97201", "country": "US" },
       "requestUPS": true, "requestLTL": false,
-      "fromPlant": "ALP", "numPackages": 2, "pkgWeight": 15, "lastPkgWeight": 0,
+      "fromPlant": "POR", "numPackages": 2, "pkgWeight": 15, "lastPkgWeight": 0,
       "accessorials": "RESIDENTIAL-DELIVERY;"
     }
   },
@@ -42,7 +42,7 @@
     "body": {
       "toAddress": { "street": "500 Parity Test Way", "city": "Denver", "state": "CO", "zip": "80202", "country": "US" },
       "requestUPS": false, "requestLTL": true,
-      "fromPlant": "ALP", "freightClass": "70", "numPackages": 6, "pkgWeight": 150, "lastPkgWeight": 0,
+      "fromPlant": "BUT", "freightClass": "70", "numPackages": 6, "pkgWeight": 150, "lastPkgWeight": 0,
       "accessorials": "LIFTGATE-DELIVERY;INSIDE-DELIVERY;"
     }
   },

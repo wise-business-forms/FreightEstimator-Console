@@ -1,0 +1,159 @@
+{
+    "correlationId":  "parity-net10-parcel-multi-20261022133257",
+    "processingError":  null,
+    "upsRates":  [
+                     {
+                         "basicProvider":  "UPS",
+                         "basicMethod":  "UPSNextDayAir",
+                         "basicRate":  0.0,
+                         "totalCharges":  1345.70,
+                         "plantCode":  "FTW",
+                         "note":  ""
+                     },
+                     {
+                         "basicProvider":  "UPS",
+                         "basicMethod":  "NextDayAirEarlyAM",
+                         "basicRate":  0.0,
+                         "totalCharges":  3044.54,
+                         "plantCode":  "FTW",
+                         "note":  ""
+                     },
+                     {
+                         "basicProvider":  "UPS",
+                         "basicMethod":  "NextDayAirSaver",
+                         "basicRate":  0.0,
+                         "totalCharges":  1349.37,
+                         "plantCode":  "FTW",
+                         "note":  ""
+                     },
+                     {
+                         "basicProvider":  "UPS",
+                         "basicMethod":  "UPS2ndDayAir",
+                         "basicRate":  0.0,
+                         "totalCharges":  724.34,
+                         "plantCode":  "FTW",
+                         "note":  ""
+                     },
+                     {
+                         "basicProvider":  "UPS",
+                         "basicMethod":  "SecondDayAirAM",
+                         "basicRate":  0.0,
+                         "totalCharges":  820.92,
+                         "plantCode":  "FTW",
+                         "note":  ""
+                     },
+                     {
+                         "basicProvider":  "UPS",
+                         "basicMethod":  "UPS3DaySelect",
+                         "basicRate":  0.0,
+                         "totalCharges":  893.61,
+                         "plantCode":  "FTW",
+                         "note":  ""
+                     },
+                     {
+                         "basicProvider":  "UPS",
+                         "basicMethod":  "UPSGround",
+                         "basicRate":  0.0,
+                         "totalCharges":  281.82,
+                         "plantCode":  "FTW",
+                         "note":  ""
+                     }
+                 ],
+    "ltlRates":  [
+
+                 ],
+    "loggedCalls":  [
+                        {
+                            "Id":  26,
+                            "ApiProvider":  "UPS",
+                            "ShippingMode":  "Parcel",
+                            "Operation":  "Shop",
+                            "PlantCode":  "FTW",
+                            "IsSuccess":  true,
+                            "IsTest":  true,
+                            "HttpStatusCode":  200,
+                            "ErrorMessage":  null,
+                            "DurationMs":  1069,
+                            "RequestUrl":  "https://onlinetools.ups.com/api/rating/v2403/Shop",
+                            "Quotes":  [
+                                           {
+                                               "CarrierName":  "UPS",
+                                               "ServiceLevel":  "UPSNextDayAir",
+                                               "BaseCost":  1345.70,
+                                               "MarkupPercent":  null,
+                                               "PerPackageCharge":  null,
+                                               "PerShipmentCharge":  null,
+                                               "TotalCharge":  1345.70,
+                                               "Currency":  "USD",
+                                               "TransitDays":  null
+                                           },
+                                           {
+                                               "CarrierName":  "UPS",
+                                               "ServiceLevel":  "NextDayAirEarlyAM",
+                                               "BaseCost":  3044.54,
+                                               "MarkupPercent":  null,
+                                               "PerPackageCharge":  null,
+                                               "PerShipmentCharge":  null,
+                                               "TotalCharge":  3044.54,
+                                               "Currency":  "USD",
+                                               "TransitDays":  null
+                                           },
+                                           {
+                                               "CarrierName":  "UPS",
+                                               "ServiceLevel":  "NextDayAirSaver",
+                                               "BaseCost":  1349.37,
+                                               "MarkupPercent":  null,
+                                               "PerPackageCharge":  null,
+                                               "PerShipmentCharge":  null,
+                                               "TotalCharge":  1349.37,
+                                               "Currency":  "USD",
+                                               "TransitDays":  null
+                                           },
+                                           {
+                                               "CarrierName":  "UPS",
+                                               "ServiceLevel":  "UPS2ndDayAir",
+                                               "BaseCost":  724.34,
+                                               "MarkupPercent":  null,
+                                               "PerPackageCharge":  null,
+                                               "PerShipmentCharge":  null,
+                                               "TotalCharge":  724.34,
+                                               "Currency":  "USD",
+                                               "TransitDays":  null
+                                           },
+                                           {
+                                               "CarrierName":  "UPS",
+                                               "ServiceLevel":  "SecondDayAirAM",
+                                               "BaseCost":  820.92,
+                                               "MarkupPercent":  null,
+                                               "PerPackageCharge":  null,
+                                               "PerShipmentCharge":  null,
+                                               "TotalCharge":  820.92,
+                                               "Currency":  "USD",
+                                               "TransitDays":  null
+                                           },
+                                           {
+                                               "CarrierName":  "UPS",
+                                               "ServiceLevel":  "UPS3DaySelect",
+                                               "BaseCost":  893.61,
+                                               "MarkupPercent":  null,
+                                               "PerPackageCharge":  null,
+                                               "PerShipmentCharge":  null,
+                                               "TotalCharge":  893.61,
+                                               "Currency":  "USD",
+                                               "TransitDays":  null
+                                           },
+                                           {
+                                               "CarrierName":  "UPS",
+                                               "ServiceLevel":  "UPSGround",
+                                               "BaseCost":  281.82,
+                                               "MarkupPercent":  null,
+                                               "PerPackageCharge":  null,
+                                               "PerShipmentCharge":  null,
+                                               "TotalCharge":  281.82,
+                                               "Currency":  "USD",
+                                               "TransitDays":  null
+                                           }
+                                       ]
+                        }
+                    ]
+}

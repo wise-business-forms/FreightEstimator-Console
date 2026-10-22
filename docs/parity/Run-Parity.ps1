@@ -64,10 +64,13 @@ function Get-Comparable($response) {
     [pscustomobject]@{ processingError = $response.processingError; calls = $calls }
 }
 
+# Unique per run: the harness reads rows back by CorrelationId, so a re-run must not reuse one.
+$runId = Get-Date -Format 'yyyyMMddHHmmss'
+
 $failures = 0
 foreach ($r in $requests) {
     $body = $r.body | ConvertTo-Json -Depth 6 | ConvertFrom-Json
-    $body | Add-Member -NotePropertyName correlationId -NotePropertyValue "parity-$Label-$($r.name)" -Force
+    $body | Add-Member -NotePropertyName correlationId -NotePropertyValue "parity-$Label-$($r.name)-$runId" -Force
     $body | Add-Member -NotePropertyName pickupDate -NotePropertyValue $pickupDate -Force
 
     $outFile = Join-Path $OutDir "$($r.name).json"
@@ -80,6 +83,19 @@ foreach ($r in $requests) {
         continue
     }
     $resp | ConvertTo-Json -Depth 10 | Set-Content $outFile
+
+    # A harness-side error or an empty call log means the capture is not usable, unless the
+    # request is expected to fail ("expectError" in requests.json).
+    if (-not $r.expectError) {
+        if ($resp.processingError) {
+            Write-Host "[$($r.name)] FAIL: harness processingError: $($resp.processingError)" -ForegroundColor Red
+            $failures++
+        }
+        if (@($resp.loggedCalls).Count -eq 0) {
+            Write-Host "[$($r.name)] FAIL: no Carrier API Calls were logged" -ForegroundColor Red
+            $failures++
+        }
+    }
 
     # Every call must be flagged as a Test Call, in either mode.
     $notTest = @($resp.loggedCalls | Where-Object { -not $_.IsTest })
