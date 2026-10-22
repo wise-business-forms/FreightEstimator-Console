@@ -12,8 +12,6 @@ namespace FreightEstApp35
             //WiseTools.logToFile(Config.logFile, "Launching application: " + Config.ENVIRONMENT, true);
             Console.WriteLine("Launching application: " + Config.ENVIRONMENT);
 
-            string filePath = Assembly.GetExecutingAssembly().Location;
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(filePath);
             Console.WriteLine("Version: 4.25.2025");
             //System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             //Console.WriteLine("Security Protocol configured.");

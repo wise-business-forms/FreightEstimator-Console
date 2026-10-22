@@ -286,7 +286,7 @@ namespace FreightEstApp35
             string req = "grant_type=client_credentials";
             byte[] data = Encoding.ASCII.GetBytes(req);
             var accessID = Config.UPSClientId + ":" + Config.UPSClientSecret;
-            var base64 = Convert.ToBase64String(Encoding.Default.GetBytes(accessID));
+            var base64 = Convert.ToBase64String(Encoding.ASCII.GetBytes(accessID));
             string sResponse = "";
             string sToken = "";
             string url = Config.UPSGenerateTokenURL;
