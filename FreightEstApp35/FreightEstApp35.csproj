@@ -14,6 +14,8 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.3" />
+    <!-- Pin: the transitive 9.0.18 pulled in by Microsoft.Data.SqlClient has known vulnerabilities. -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
   </ItemGroup>
 
 </Project>
