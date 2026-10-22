@@ -185,7 +185,7 @@ The `.vscode` tasks and launch profile build with `dotnet build` and debug with 
 - No queued requests means idle polling/sleep behavior.
 - Runtime success depends on network access to SQL and external carrier endpoints.
 - The queue has no claim step: a request is picked with a plain `SELECT TOP 1 ... WHERE DateProcessed IS NULL OR DateRated IS NULL`. **Never run two instances against the same queue**; both will process the same request.
-- At startup the app prints its resolved connection string, including the SQL password, to stdout. Do not capture that output somewhere other people can read it.
+- At startup the app prints a status banner (plant, database servers, connectivity checks, accounts, runtime) to stdout. The SQL password is never printed. The SQL login is, so a startup log still names the account in use.
 
 ## Troubleshooting Quick Checks
 - A published exe that starts but behaves as if every setting is missing is reading no config: confirm the file is named `FreightEstApp35.dll.config` (not `.exe.config`) and sits next to the exe.

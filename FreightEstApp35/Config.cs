@@ -151,14 +151,6 @@ namespace FreightEstApp35
             //    _ConnString = _TEST_ConnString;
             //    _SQLProviderAbbriviations = _TEST_SQLProviderAbbriviations;
             //}
-
-            Console.WriteLine("Environment: " + _ENVIRONMENT);
-            Console.WriteLine("UPSAuthorizationURL: " + _UPSAuthorizationURL);
-            Console.WriteLine("UPSGenerateTokenURL: " + _UPSGenerateTokenURL);
-            Console.WriteLine("UPSAddressValidationURL: " + _UPSAddressValidationURL);
-            Console.WriteLine("UPSShopRatesURL: " + _UPSShopRatesURL);
-            Console.WriteLine("ConnString: " + _ConnString);
-            Console.WriteLine("SQLProviderAbbriviations: " + _SQLProviderAbbriviations);
         }
 
 

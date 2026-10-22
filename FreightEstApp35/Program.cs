@@ -7,18 +7,8 @@ namespace FreightEstApp35
     {
         static void Main(string[] args)
         {
-            //WiseTools.logToFile(Config.logFile, "Launching application: " + Config.ENVIRONMENT, true);
-            Console.WriteLine("Launching application: " + Config.ENVIRONMENT);
-
-            Console.WriteLine("Version: 4.25.2025");
-            //System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-            //Console.WriteLine("Security Protocol configured.");
-            // Sets environment flag [PROD|DEBUG] based on host name.
-            Console.WriteLine("Set Prod/Debug Flag.");
             Config.SetProdDebug();
-
-            Console.WriteLine("CUSTOM DEPLOYMENT COMMENT TO ENSURE UPDATE.");
-
+            StartupBanner.Print();
 
             while (1 == 1)
             {

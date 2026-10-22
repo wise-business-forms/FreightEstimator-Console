@@ -14,7 +14,7 @@ The repo does not record how production is actually hosted. Fill these in, once,
 - [ ] **Host and folder.** The old ClickOnce publish target was `\\azweb10\c$\Wise Utilities\FreightEstApp-PTLERP\`. Confirm where the app actually runs from today.
 - [ ] **How it is started and stopped** (Windows service wrapper, Task Scheduler, a console left open, or something else), and who has rights to do so.
 - [ ] **How many instances exist.** The folder name says `PTLERP`, but the checked-in `App.config` has `RemoteServerName=ALPERP`, and SANDBOX has linked servers for ALPERP, BUTERP, FTWERP and PTLERP. If there is one instance per ERP, each has its own deployed config and each needs this procedure, one at a time. Never assume the repo's `App.config` matches what is deployed.
-- [ ] **Where its output goes.** The app prints its resolved connection string, **including the SQL password**, to stdout at startup. If stdout is captured to a file or log, that file is sensitive.
+- [ ] **Where its output goes.** The app prints a startup banner to stdout: plant, SQL servers and login, connectivity checks, Windows account, runtime. It does not print the SQL password. Use the banner to verify the new instance after starting it.
 - [ ] **Who watches the queue afterwards**, and how long the verification window is.
 
 ## Before the window
