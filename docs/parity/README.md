@@ -11,8 +11,8 @@ Proves the upgraded app produces the same Carrier Rate Quotes as the old one, us
 
 ## Procedure
 
-1. **SANDBOX database.** Apply `sandbox-setup.sql`, then `FreightEstApp35/Sql/003_CarrierApiCallQuote.sql` and `004_CarrierApiCall_IsTest.sql` (001/002 are superseded by 003 and not needed on a fresh database). The linked-server name for the provider abbreviations is `SANDBOX` itself.
-2. **Point the harness at SANDBOX.** `Config.SetProdDebug()` always uses the `PROD_*` settings, so edit the settings in the harness's *build-output* config copy (never the tracked `App.config`): `PROD_Server`, `PROD_User`, `PROD_Password` (and the `TEST_*` equivalents, to be safe) and `RemoteServerName=SANDBOX`.
+1. **SANDBOX database.** To bring SANDBOX's structures in line with production, see `docs/sandbox/README.md`. For a minimal setup, apply `sandbox-setup.sql`, then `FreightEstApp35/Sql/003_CarrierApiCallQuote.sql` and `004_CarrierApiCall_IsTest.sql` (001/002 are superseded by 003 and not needed on a fresh database). The linked-server name for the provider abbreviations is `SANDBOX` itself.
+2. **Point the harness at SANDBOX.** Nothing to edit: the tracked config defaults to `SANDBOX`, and on any machine not listed in `ProductionHosts` the harness runs in Test Mode (Integrated Security, SANDBOX only, refuses to start otherwise). Your Windows account needs a SANDBOX login (`docs/sandbox/grant-sandbox-access.sql`). See `docs/adr/0004-environment-from-machine-name.md`.
 3. **Baseline (net48).** Build the harness from the last net48 commit (`7f5d539`, master before the upgrade) and start it. The output config is `CarrierTestHarness.exe.config`. The old project's build output is missing four package DLLs it references (`System.Runtime.CompilerServices.Unsafe`, `Microsoft.Bcl.AsyncInterfaces`, `System.Text.Encodings.Web`, `System.Threading.Tasks.Extensions`); copy them from `packages/` next to the exe or UPS token requests fail.
    ```powershell
    .\Run-Parity.ps1 -Mode capture -OutDir .\out\net48 -Label net48
@@ -23,7 +23,7 @@ Proves the upgraded app produces the same Carrier Rate Quotes as the old one, us
    ```
 5. Run steps 3 and 4 on the same day, close together. A mismatch is reported per request with the differing quote lines.
 
-The harness prints its connection string, including the password, to stdout at startup. Redirect its output to a file when running it unattended.
+In Test Mode the connection uses Integrated Security, so the startup output carries no password.
 
 ## Known sandbox behavior (identical in both builds)
 
@@ -36,7 +36,7 @@ The harness prints its connection string, including the password, to stdout at s
 The harness exercises the net10 code, not the published `FreightEstApp35.exe`. To test the real artifact:
 
 1. `dotnet publish FreightEstApp35 -p:PublishProfile=SelfContainedSingleFile`, then copy `FreightEstApp35\bin\publish\` to a scratch folder (never edit the tracked output).
-2. Edit the scratch copy's `FreightEstApp35.dll.config` so `RemoteServerName`, `PROD_Server` and `TEST_Server` are all `SANDBOX` (with the SANDBOX credentials). Check this before launching: the exe polls `<RemoteServerName>.CostPlus.dbo.FreightRequests` in a loop and writes results back, so a leftover production value would process the real queue.
+2. Leave the scratch copy's `FreightEstApp35.dll.config` as built (`RemoteServerName` and `PROD_Server` are `SANDBOX`, `ProductionHosts` empty). On a machine not listed in `ProductionHosts` the exe runs in Test Mode, uses your Windows login, and refuses to start if either server setting is not `SANDBOX`, so it cannot process the production queue. The exe polls `<RemoteServerName>.CostPlus.dbo.FreightRequests` in a loop and writes results back.
 3. Insert the fictitious rows with `queue-test-rows.sql` (UPS-only; see the header for why).
 4. Run the exe with output redirected to a file (it prints its connection string at startup). Each request logs its Carrier API Calls to `UpsRate` with `IsTest = 0`, because the queue path is not a Test Call.
 5. Stop the exe when the rows have `DateProcessed` and `DateRated` set. Note it will also drain any other pending SANDBOX row; check the queue first (`WHERE (DateProcessed IS NULL OR DateRated IS NULL) AND ISNULL(NumPackages,0) > 0`).

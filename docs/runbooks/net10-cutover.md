@@ -22,7 +22,7 @@ The repo does not record how production is actually hosted. Fill these in, once,
 - [ ] The parity gate (#11) has passed: `docs/parity/README.md`, including the SANDBOX test of the published exe. Re-run the harness comparison on the day if the build changed since the last run.
 - [ ] The upgrade branch is merged and the exact commit to deploy is recorded here: `__________`.
 - [ ] Build from that commit: `dotnet publish FreightEstApp35 -p:PublishProfile=SelfContainedSingleFile`. Output: `FreightEstApp35\bin\publish\` with `FreightEstApp35.exe` and `FreightEstApp35.dll.config`.
-- [ ] Prepare the new config: take the **currently deployed** config's `appSettings` values (production server, user, password, `RemoteServerName`, log file name) and put them in the new `FreightEstApp35.dll.config`. Do not ship the checked-in `App.config` values blindly. Verify every server-like setting names the intended production server.
+- [ ] Prepare the new config: take the **currently deployed** config's `appSettings` values (production server, user, password, `RemoteServerName`, log file name) and add `ProductionHosts` set to this machine's name (see `docs/adr/0004-environment-from-machine-name.md`; without it the app runs in Test Mode and refuses production servers) and put them in the new `FreightEstApp35.dll.config`. Do not ship the checked-in `App.config` values blindly. Verify every server-like setting names the intended production server.
 - [ ] Record the queue state, using the production `RemoteServerName` (shown here as `<erp>`):
   ```sql
   SELECT COUNT(*) AS pending
@@ -42,7 +42,7 @@ The repo does not record how production is actually hosted. Fill these in, once,
 2. **Keep the rollback copy.** Copy the entire current deployment folder to a dated folder beside it, for example `FreightEstApp-PTLERP.net48-YYYYMMDD`, before changing anything. It must contain the old exe, its `.exe.config`, and the old binaries. Do not delete it until the rollback window has passed.
 3. **Deploy.** Copy `FreightEstApp35.exe` and the prepared `FreightEstApp35.dll.config` into the deployment folder. The `.pdb` is optional. Leave the old net48 files alone, or move them into the rollback folder.
 4. **Start the new instance** the way the old one was started. Redirect or limit its output if stdout is captured (see open items).
-5. **Check the startup output.** It should print `Environment: PRODUCTION`, the UPS endpoint URLs, and the connection string. Confirm the connection string names the intended production server, not SANDBOX. Then it should either report requests being processed or sit idle polling. No exception, and no `TypeInitializationException` (that means the SQL native library is missing from the exe).
+5. **Check the startup output.** The banner must show `Mode: PRODUCTION HOST` and a `Why` line saying this machine is a configured production host. If it says `TEST MODE`, or the app printed `REFUSING TO START`, the machine's name is missing from `ProductionHosts` in the deployed config (or a server setting is wrong): stop and fix the config. Confirm the `Carrier log DB` and `Request queue` lines name the intended production servers, not SANDBOX (a Production Host refuses SANDBOX). Then it should either report requests being processed or sit idle polling. No exception, and no `TypeInitializationException` (that means the SQL native library is missing from the exe).
 
 ## Verify
 
