@@ -31,14 +31,14 @@ A shipping origin location, identified by PlantCode, used as the ship-from addre
 A Carrier API Call deliberately triggered for testing rather than a real customer shipment, marked by the `IsTest` flag. UPS has no available sandbox for the REST Rating API this app uses, so a UPS Test Call still hits production UPS — `IsTest` is the only thing distinguishing it from real traffic. TransPlace and TransportationInsight Test Calls route to their real sandbox/demo endpoints instead of production.
 
 **SANDBOX**:
-The one SQL Server instance all testing runs against. It is the test equivalent of both the production ERP server (the `RemoteServerName` side, holding the `CostPlus` request queue) and the production rates server (azuredb01, holding `UpsRate`). Nothing that is not a production run may connect to anything else.
+The one test environment. It stands in for everything production provides: the request queue and the carrier rate and log data. All testing runs against it and nothing else.
 _Avoid_: Test server, dev database
 
 **Production Host**:
-A machine named in the app's configuration as allowed to run production. The list is configuration, not code, so production servers can change without a rebuild. Any machine not listed, including a developer's workstation, is not a Production Host.
+A machine declared to be allowed to run production. Any machine not declared as one, including a developer's workstation, is not a Production Host.
 
 **Test Mode**:
-How the app runs on any machine that is not a Production Host. In Test Mode the app may talk only to SANDBOX and refuses to start otherwise. A Production Host, conversely, may not point at SANDBOX.
+How the app runs on any machine that is not a Production Host: it may use SANDBOX only. A Production Host, conversely, may never use SANDBOX.
 _Avoid_: Debug mode, dev mode
 
 **Carrier Test Harness**:

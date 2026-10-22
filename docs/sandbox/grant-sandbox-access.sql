@@ -1,12 +1,12 @@
 -- Grants a Windows group the minimum rights the app needs on SANDBOX, so developers can run it in Test Mode
 -- with Integrated Security. For the DBA to review and run; the app never runs this.
--- Idempotent. Refuses to run anywhere except SANDBOX.
+-- Idempotent. Refuses to run anywhere except SANDBOX. It is deliberately ONE batch (no GO): a THROW only ends
+-- its own batch, so a GO after the guard would let the rest run on the wrong server.
 --
 -- Rights: read and write data in UpsRate and CostPlus, and execute the stored procedures the app calls.
 -- No sysadmin, db_owner, DDL, or database-creation rights.
 
 IF @@SERVERNAME <> 'SANDBOX' THROW 50010, 'Refusing to run: not connected to SANDBOX.', 1;
-GO
 
 DECLARE @GroupLogin sysname = N'WISENT\FreightEstimator-Developers';  -- edit: the AD group to grant
 
@@ -42,4 +42,3 @@ BEGIN
 END
 CLOSE dbs;
 DEALLOCATE dbs;
-GO
