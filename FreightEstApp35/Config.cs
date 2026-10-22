@@ -8,9 +8,6 @@ namespace FreightEstApp35
 {
     public static class Config
     {
-        // Toggleing between Prod and Test is based on host machine name.
-        static string HOST_PRODUCTION_WEB = "SUWWEB05"; // If this is the host name it will run production settings.
-        static string _ENVIRONMENT = String.Empty;
         [Obsolete]
         static string _RemoteServerName = ConfigurationManager.AppSettings.Get("RemoteServerName");
         static string _LogFile = "FreightEstApp35.log";
@@ -20,25 +17,16 @@ namespace FreightEstApp35
         const string SqlSecurityOptions = "Encrypt=False;TrustServerCertificate=True;";
         [Obsolete]
         static string _PROD_ConnString = "Server=" + ConfigurationManager.AppSettings.Get("PROD_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationManager.AppSettings.Get("PROD_User") + ";pwd=" + ConfigurationManager.AppSettings.Get("PROD_Password") + "; Connection Timeout=300;" + SqlSecurityOptions; // PRODUCTION
-        [Obsolete]
-        static string _TEST_ConnString = "Server=" + ConfigurationManager.AppSettings.Get("TEST_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationManager.AppSettings.Get("TEST_User") + ";pwd=" + ConfigurationManager.AppSettings.Get("TEST_Password") + "; Connection Timeout=300;" + SqlSecurityOptions; // TEST
 
         static string _PROD_SQLProviderAbbriviations = "SELECT FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations";
-        static string _TEST_SQLProviderAbbriviations = "SELECT FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations";
 
-        // UPS PRODUCTION ENDPOINTS
-        static string _PROD_UPSAuthorizationURL = "https://onlinetools.ups.com/security/v1/oauth/authorize"; // PRODUCTION
-        static string _PROD_UPSGenerateTokenURL = "https://onlinetools.ups.com/security/v1/oauth/token"; // PRODUCTION
-        static string _PROD_UPSAddressValidationURL = "https://onlinetools.ups.com/api/addressvalidation/v1/3"; //  PRODUCTION  {version}/{requestOption}
-        static string _PROD_UPSShopRatesURL = "https://onlinetools.ups.com/api/rating/v2403/"; // PRODUCTION {version}/{requestoption}        
+        // UPS endpoints. UPS has no usable sandbox for the REST Rating API, so Test Calls use these too (ADR 0002).
+        static string _UPSAuthorizationURL = "https://onlinetools.ups.com/security/v1/oauth/authorize";
+        static string _UPSGenerateTokenURL = "https://onlinetools.ups.com/security/v1/oauth/token";
+        static string _UPSAddressValidationURL = "https://onlinetools.ups.com/api/addressvalidation/v1/3"; // {version}/{requestOption}
+        static string _UPSShopRatesURL = "https://onlinetools.ups.com/api/rating/v2403/"; // {version}/{requestoption}
 
-        // UPS TEST ENDPOINTS
-        static string _TEST_UPSAuthorizationURL = "https://onlinetools.ups.com/security/v1/oauth/authorize"; // PRODUCTION
-        static string _TEST_UPSGenerateTokenURL = "https://onlinetools.ups.com/security/v1/oauth/token"; // PRODUCTION
-        static string _TEST_UPSAddressValidationURL = "https://onlinetools.ups.com/api/addressvalidation/v1/3"; //  PRODUCTION  {version}/{requestOption}
-        static string _TEST_UPSShopRatesURL = "https://onlinetools.ups.com/api/rating/v2403/"; // PRODUCTION {version}/{requestoption}    
-        
-        // UPS OFFICIAL ENDPOINTS
+        // UPS certification (non-production) endpoints, unusable for the REST Rating API (ADR 0002)
         //static string _TEST_UPSAuthorizationURL = "https://wwwcie.ups.com/security/v1/oauth/authorize"; // TEST
         //static string _TEST_UPSGenerateTokenURL = "https://wwwcie.ups.com/security/v1/oauth/token"; // TEST
         //static string _TEST_UPSAddressValidationURL = "https://wwwcie.ups.com/api/addressvalidation/v1/3"; // TEST  {version}/{requestOption}
@@ -53,10 +41,6 @@ namespace FreightEstApp35
 
         static string _SQLProviderAbbriviations = String.Empty;
         static string _ConnString = String.Empty;
-        static string _UPSAuthorizationURL = String.Empty;
-        static string _UPSGenerateTokenURL = String.Empty;
-        static string _UPSAddressValidationURL = String.Empty;
-        static string _UPSShopRatesURL = String.Empty;
         static string _UPSShipFromName = "Wise Alpharetta";
         static string _UPSShipFromAddress = "1000 Union Center Drive";
         static string _UPSShipFromCity = "Alpharetta";
@@ -124,43 +108,13 @@ namespace FreightEstApp35
             populatePlantNames();
         }
 
-        /// <summary>
-        /// Manages the DEBUG / PRODUCTION toggle based on host server name.
-        /// If the host name is unknown it will default to DEBUG.
-        /// </summary>
-        public static void SetProdDebug()
+        /// <summary>Resolves the connection string and request-queue query for this run.</summary>
+        public static void ResolveEnvironment()
         {
-            string hostServerName = Environment.MachineName;
-            //if(hostServerName == HOST_PRODUCTION_WEB)
-            {
-                _ENVIRONMENT = "PRODUCTION";
-                _UPSAuthorizationURL = _PROD_UPSAuthorizationURL;
-                _UPSGenerateTokenURL = _PROD_UPSGenerateTokenURL;
-                _UPSAddressValidationURL = _PROD_UPSAddressValidationURL;
-                _UPSShopRatesURL = _PROD_UPSShopRatesURL;
-                _ConnString = _PROD_ConnString;
-                _SQLProviderAbbriviations = _PROD_SQLProviderAbbriviations;
-            }
-            //else
-            //{
-            //    _ENVIRONMENT = "DEBUG";
-            //    _UPSAuthorizationURL = _TEST_UPSAuthorizationURL;
-            //    _UPSGenerateTokenURL = _TEST_UPSGenerateTokenURL;
-            //    _UPSAddressValidationURL = _TEST_UPSAddressValidationURL;
-            //    _UPSShopRatesURL = _TEST_UPSShopRatesURL;
-            //    _ConnString = _TEST_ConnString;
-            //    _SQLProviderAbbriviations = _TEST_SQLProviderAbbriviations;
-            //}
+            _ConnString = _PROD_ConnString;
+            _SQLProviderAbbriviations = _PROD_SQLProviderAbbriviations;
         }
 
-
-        public static string ENVIRONMENT
-        {
-            get
-            {
-                return _ENVIRONMENT;
-            }
-        }
         public static string ConnString
         {
             get { return _ConnString; }

@@ -22,7 +22,7 @@ namespace CarrierTestHarness
 
         static void Main(string[] args)
         {
-            Config.SetProdDebug();
+            Config.ResolveEnvironment();
 
             var listener = new HttpListener();
             listener.Prefixes.Add(Prefix);

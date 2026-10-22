@@ -7,7 +7,7 @@ namespace FreightEstApp35
     {
         static void Main(string[] args)
         {
-            Config.SetProdDebug();
+            Config.ResolveEnvironment();
             StartupBanner.Print();
 
             while (1 == 1)

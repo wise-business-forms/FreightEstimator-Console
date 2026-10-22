@@ -12,7 +12,7 @@ namespace FreightEstimator_Console_NUnit
             { "BUT", "Butler" },
         };
 
-        static StartupInfo SampleInfo(string connString = "Server=azuredb01\\azuredb01; Initial Catalog=UpsRate;uid=sa;pwd=Sup3rS3cret!; Connection Timeout=300;")
+        static StartupInfo SampleInfo(string connString = "Server=dbhost01; Initial Catalog=UpsRate;uid=sa;pwd=Sup3rS3cret!; Connection Timeout=300;")
         {
             return new StartupInfo
             {
@@ -49,7 +49,7 @@ namespace FreightEstimator_Console_NUnit
         {
             string text = StartupBanner.Render(SampleInfo());
 
-            Assert.That(text, Does.Contain("azuredb01\\azuredb01"));
+            Assert.That(text, Does.Contain("dbhost01"));
             Assert.That(text, Does.Contain("UpsRate"));
             Assert.That(text, Does.Contain("ALPERP.CostPlus"));
             Assert.That(text, Does.Contain("ALP - Alpharetta (linked server ALPERP)"));
