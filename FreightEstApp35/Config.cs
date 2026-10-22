@@ -13,10 +13,6 @@ namespace FreightEstApp35
         static string _LogFile = "FreightEstApp35.log";
 
         #region Environment specific settings
-        // Microsoft.Data.SqlClient defaults to Encrypt=true; these match the old System.Data.SqlClient behavior (see ADR 0003).
-        const string SqlSecurityOptions = "Encrypt=False;TrustServerCertificate=True;";
-        [Obsolete]
-        static string _PROD_ConnString = "Server=" + ConfigurationManager.AppSettings.Get("PROD_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationManager.AppSettings.Get("PROD_User") + ";pwd=" + ConfigurationManager.AppSettings.Get("PROD_Password") + "; Connection Timeout=300;" + SqlSecurityOptions; // PRODUCTION
 
         static string _PROD_SQLProviderAbbriviations = "SELECT FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations";
 
@@ -41,6 +37,7 @@ namespace FreightEstApp35
 
         static string _SQLProviderAbbriviations = String.Empty;
         static string _ConnString = String.Empty;
+        static EnvironmentResolution _Resolution;
         static string _UPSShipFromName = "Wise Alpharetta";
         static string _UPSShipFromAddress = "1000 Union Center Drive";
         static string _UPSShipFromCity = "Alpharetta";
@@ -108,11 +105,36 @@ namespace FreightEstApp35
             populatePlantNames();
         }
 
-        /// <summary>Resolves the connection string and request-queue query for this run.</summary>
+        /// <summary>
+        /// Classifies this run as a Production Host or Test Mode from the machine name and the configured
+        /// ProductionHosts list, then sets the connection string and request-queue query. If the configured
+        /// servers do not fit the mode, prints why and exits before any connection is opened.
+        /// </summary>
         public static void ResolveEnvironment()
         {
-            _ConnString = _PROD_ConnString;
+            _Resolution = EnvironmentEvaluator.Evaluate(
+                Environment.MachineName,
+                EnvironmentEvaluator.ParseHostList(ConfigurationManager.AppSettings.Get("ProductionHosts")),
+                ConfigurationManager.AppSettings.Get("PROD_Server"),
+                _RemoteServerName);
+
+            if (_Resolution.IsRefused)
+            {
+                Console.Error.WriteLine("REFUSING TO START: " + _Resolution.Refusal);
+                Environment.Exit(2);
+            }
+
+            _ConnString = ConnectionStrings.Build(
+                _Resolution.Mode,
+                ConfigurationManager.AppSettings.Get("PROD_Server"),
+                ConfigurationManager.AppSettings.Get("PROD_User"),
+                ConfigurationManager.AppSettings.Get("PROD_Password"));
             _SQLProviderAbbriviations = _PROD_SQLProviderAbbriviations;
+        }
+
+        public static EnvironmentResolution Resolution
+        {
+            get { return _Resolution; }
         }
 
         public static string ConnString
