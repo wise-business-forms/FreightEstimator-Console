@@ -19,7 +19,14 @@ sqlcmd -S <server> -d <database> -E -y 0 -s "|" -i inventory.sql -o <saved-file>
 
 Hand the four files back. When diffing production against SANDBOX, ignore the `server` line at the top of each file (server name and capture time always differ). A delta migration script (schema only, no data, only objects the app references plus their dependencies) is generated from the diff and reviewed before it is applied to SANDBOX. After it is applied, re-running the inventory on SANDBOX and diffing against production should show no differences for those objects.
 
-Objects the app references. In `UpsRate`: `Plants`, `GetPlantCharges` (and the tables it reads), `VerifyAndCorrect_PO_ZipCode`, `CarrierApiCall`, `CarrierRateQuote`. In `CostPlus`: `FreightRequests` and `FreightProviderAbbreviations`.
+## Scope: only what the app uses
+
+SANDBOX only has to match the structures this app actually touches, not the rest of production. Checked against the 2026-10-22 inventories:
+
+- **`CostPlus.dbo.FreightRequests`**: every column the app reads or writes (103, including the numbered result slots) is identical to production. No change needed.
+- **`UpsRate.dbo.Plants`**: the five columns the app reads (`PlantCode`, `City`, `State`, `Zip`, `Country`) are identical. Production's extra columns (`GLCode`, `UpsShippingNumber`) and primary key are not used by the app and are not migrated.
+- **`UpsRate.dbo.CarrierApiCall` and `CarrierRateQuote`**: columns identical.
+- **`UpsRate.dbo.GetPlantCharges`** and **`UpsRate.dbo.VerifyAndCorrect_PO_ZipCode`**: **not yet compared.** The production login used for the inventory could not see stored procedures. Re-run `inventory.sql` on production `UpsRate` with a login that can see definitions, then compare. `VerifyAndCorrect_PO_ZipCode` is known to be missing on SANDBOX. Whatever tables or columns `GetPlantCharges` reads (for example `PlantCarrierCharges2017`, where production has an `Active` column SANDBOX lacks) are in scope only once its definition shows it uses them.
 
 ## 2. Access (the DBA runs it)
 
