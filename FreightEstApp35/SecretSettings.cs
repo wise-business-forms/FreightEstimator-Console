@@ -19,10 +19,20 @@ namespace FreightEstApp35
             "TI_ApiUsername", "TI_ApiPassword",
         };
 
-        /// <summary>Returns every required key that is not set or is blank.</summary>
+        // A Production Host connects with a SQL login; Test Mode uses Integrated Security and needs none (ADR 0004).
+        public static readonly IReadOnlyList<string> ProductionOnlyKeys = new[] { "PROD_User", "PROD_Password" };
+
+        /// <summary>Returns every always-required key that is not set or is blank.</summary>
         public static IReadOnlyList<string> FindMissing(Func<string, string> getSetting)
         {
             return RequiredKeys.Where(k => string.IsNullOrWhiteSpace(getSetting(k))).ToList();
+        }
+
+        /// <summary>As above, plus the SQL login keys when running as a Production Host.</summary>
+        public static IReadOnlyList<string> FindMissing(Func<string, string> getSetting, RunMode mode)
+        {
+            IEnumerable<string> keys = mode == RunMode.Production ? RequiredKeys.Concat(ProductionOnlyKeys) : RequiredKeys;
+            return keys.Where(k => string.IsNullOrWhiteSpace(getSetting(k))).ToList();
         }
     }
 }

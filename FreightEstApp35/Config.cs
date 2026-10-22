@@ -120,7 +120,7 @@ namespace FreightEstApp35
                 Environment.Exit(2);
             }
 
-            IReadOnlyList<string> missingSecrets = SecretSettings.FindMissing(ConfigurationManager.AppSettings.Get);
+            IReadOnlyList<string> missingSecrets = SecretSettings.FindMissing(ConfigurationManager.AppSettings.Get, _Resolution.Mode);
             if (missingSecrets.Count > 0)
             {
                 Console.Error.WriteLine("REFUSING TO START: missing required secret setting(s): " + string.Join(", ", missingSecrets)

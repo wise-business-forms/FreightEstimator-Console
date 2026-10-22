@@ -54,6 +54,34 @@ namespace FreightEstimator_Console_NUnit
         }
 
         [Test]
+        public void ProductionHost_AlsoRequiresTheSqlLogin()
+        {
+            var settings = AllPresent();
+
+            var missing = SecretSettings.FindMissing(k => Lookup(settings, k), RunMode.Production);
+
+            Assert.That(missing, Is.EquivalentTo(new[] { "PROD_User", "PROD_Password" }));
+        }
+
+        [Test]
+        public void ProductionHost_WithTheSqlLoginSet_NothingMissing()
+        {
+            var settings = AllPresent();
+            settings["PROD_User"] = "svc";
+            settings["PROD_Password"] = "pw";
+
+            Assert.That(SecretSettings.FindMissing(k => Lookup(settings, k), RunMode.Production), Is.Empty);
+        }
+
+        [Test]
+        public void TestMode_DoesNotRequireTheSqlLogin()
+        {
+            var settings = AllPresent();
+
+            Assert.That(SecretSettings.FindMissing(k => Lookup(settings, k), RunMode.Test), Is.Empty);
+        }
+
+        [Test]
         public void RequiredKeys_HaveNoDuplicatesAndNoDemoOnlyM33Token()
         {
             Assert.That(SecretSettings.RequiredKeys, Is.Unique);
