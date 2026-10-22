@@ -54,7 +54,7 @@ Configuration includes:
 - Environment toggles and plant shipping metadata
 
 Security note:
-- This repository currently contains plaintext credentials/secrets in configuration/code. Treat this repo as sensitive and rotate/move secrets to secure storage when possible.
+- Credentials are no longer kept in source. They are read from `appSettings`, supplied by a git-ignored `secrets.config` beside the exe (template: `FreightEstApp35/secrets.config.example`) or by the deployed config, and the app refuses to start if any is missing (ADR 0005). The old values remain in git history and must be rotated.
 
 ## Carrier API Logging
 Every physical call this app makes to a carrier's API (UPS, TransPlace, TransportationInsight) is logged, insert-only, across two tables in the `UpsRate` database:
