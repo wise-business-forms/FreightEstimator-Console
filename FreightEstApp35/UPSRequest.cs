@@ -281,8 +281,6 @@ namespace FreightEstApp35
 
         public string GetToken()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-
             string req = "grant_type=client_credentials";
             byte[] data = Encoding.ASCII.GetBytes(req);
             var accessID = Config.UPSClientId + ":" + Config.UPSClientSecret;
