@@ -6,8 +6,6 @@ using System.Data;
 using System.Xml.Linq;
 using System.IO;
 using System.Net;
-using FreightEstApp35.UpsAddressValidationWebReference;
-using FreightEstApp35.UpsRateWebReference;
 using System.Data.SqlClient;
 
 namespace FreightEstApp35

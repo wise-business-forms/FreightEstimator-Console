@@ -72,9 +72,6 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SoapTrace">
-      <HintPath>..\..\Freight Estimator\Bin\SoapTrace.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -104,7 +101,6 @@
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -124,11 +120,6 @@
     <Compile Include="PlantCharges.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ProviderInfo.cs" />
     <Compile Include="RateCalulations.cs" />
     <Compile Include="RateDetail.cs" />
@@ -139,21 +130,6 @@
     <Compile Include="UPSRequest.cs" />
     <Compile Include="UPSResponse.cs" />
     <Compile Include="UPSService.cs" />
-    <Compile Include="Web References\FreightRateWebReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\UpsAddressValidationWebReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\UpsRateWebReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="WiseTools.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -167,91 +143,6 @@
     <None Include="Sql\002_CarrierApiLog_Redesign.sql" />
     <None Include="Sql\003_CarrierApiCallQuote.sql" />
     <None Include="Sql\004_CarrierApiCall_IsTest.sql" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\FreightRateWebReference\common.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\FreightRateWebReference\Error1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\FreightRateWebReference\FreightRate.wsdl" />
-    <None Include="Web References\FreightRateWebReference\FreightRateResponse.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\FreightRateWebReference\FreightRateWebServiceSchema.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\FreightRateWebReference\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\FreightRateWebReference\UPSSecurity.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\UpsAddressValidationWebReference\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\UpsAddressValidationWebReference\XAV.wsdl" />
-    <None Include="Web References\UpsAddressValidationWebReference\XAVResponse.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\UpsRateWebReference\common.xsd" />
-    <None Include="Web References\UpsRateWebReference\Error1.xsd" />
-    <None Include="Web References\UpsRateWebReference\RateResponse.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\UpsRateWebReference\RateWebServiceSchema.xsd" />
-    <None Include="Web References\UpsRateWebReference\RateWS.wsdl" />
-    <None Include="Web References\UpsRateWebReference\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\UpsRateWebReference\UPSSecurity.xsd" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WebReferences Include="Web References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WebReferenceUrl Include="C:\Misc Projects\Freight Estimator\Address_Validation_Street_Level\Street Level Address Validation for SHIPPING\XAVWebServices\SCHEMAS-WSDLs\XAV.wsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\UpsAddressValidationWebReference\</RelPath>
-      <UpdateFromURL>C:\Misc Projects\Freight Estimator\Address_Validation_Street_Level\Street Level Address Validation for SHIPPING\XAVWebServices\SCHEMAS-WSDLs\XAV.wsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>FreightEstApp35_UpsAddressValidationWebReference_XAVService</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="C:\Misc Projects\Freight Estimator\Rates_Pkg_Gnd\RatingPACKAGE\PACKAGEWebServices\SCHEMA-WSDLs\RateWS.wsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\UpsRateWebReference\</RelPath>
-      <UpdateFromURL>C:\Misc Projects\Freight Estimator\Rates_Pkg_Gnd\RatingPACKAGE\PACKAGEWebServices\SCHEMA-WSDLs\RateWS.wsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>FreightEstApp35_UpsRateWebReference_RateService</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="C:\Wise\UPS 2019\RatingGROUNDFREIGHTWebService\SCHEMA-WSDLs\FreightRate.wsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\FreightRateWebReference\</RelPath>
-      <UpdateFromURL>C:\Wise\UPS 2019\RatingGROUNDFREIGHTWebService\SCHEMA-WSDLs\FreightRate.wsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>FreightEstApp35_FreightRateWebReference_FreightRateService</CachedSettingsPropName>
-    </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">
