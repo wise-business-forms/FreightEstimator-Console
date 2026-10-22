@@ -25,6 +25,8 @@ Proves the upgraded app produces the same Carrier Rate Quotes as the old one, us
 
 In Test Mode the connection uses Integrated Security, so the startup output carries no password.
 
+**Secrets.** The app and harness refuse to start without the carrier credentials. Copy `secrets.config.example` to `secrets.config` next to the built exe (git-ignored) and fill it in; the build copies it into the output when it sits in the project folder. See ADR 0005.
+
 ## Known sandbox behavior (identical in both builds)
 
 - TransPlace's sandbox host returns HTTP 404 for every quote call.

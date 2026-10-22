@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+## Secrets and captured database inventories (see ADR 0005 and docs/sandbox/README.md)
+secrets.config
+docs/sandbox/prod-*
+docs/sandbox/sandbox-*
+docs/sandbox/load-*

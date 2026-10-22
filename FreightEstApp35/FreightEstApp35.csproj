@@ -18,4 +18,11 @@
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <!-- Carrier credentials (git-ignored). Copied beside the exe when present; see ADR 0005. -->
+    <None Include="secrets.config" CopyToOutputDirectory="PreserveNewest" Condition="Exists('secrets.config')" />
+    <None Include="secrets.config.example" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

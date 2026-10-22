@@ -29,11 +29,11 @@ namespace FreightEstApp35
         //static string _TEST_UPSShopRatesURL = "https://wwwcie.ups.com/api/rating/v2403/"; // TEST {version}/{requestoption}        
         #endregion
 
-        static string _UPSAccessKey = "CC83ED82D080DC80";
-        static string _UPSUserName = "WiseWebSupport";
-        static string _UPSPassword = "Wise_forms";
-        static string _UPSClientId = "SzWbVRiGAPPbC0NqV9GGXdE8kUE0EnexGrxsl94sj0HGTdAX";
-        static string _UPSClientSecret = "zcnbBCf3qPGLleJv1aBqOH8SbAbFssLoE1vAAUGbrnXK2GJAQJUTAskarDv70Ddw";
+        static string _UPSAccessKey = ConfigurationManager.AppSettings.Get("UPS_AccessKey");
+        static string _UPSUserName = ConfigurationManager.AppSettings.Get("UPS_UserName");
+        static string _UPSPassword = ConfigurationManager.AppSettings.Get("UPS_Password");
+        static string _UPSClientId = ConfigurationManager.AppSettings.Get("UPS_ClientId");
+        static string _UPSClientSecret = ConfigurationManager.AppSettings.Get("UPS_ClientSecret");
 
         static string _SQLProviderAbbriviations = String.Empty;
         static string _ConnString = String.Empty;
@@ -74,31 +74,27 @@ namespace FreightEstApp35
         static string _M33DemoUrl = "http://demo.m33integrated.com/api/";
         static string _M33ProdUrl = "https://blackbeardapp.com/api/";
 
-        static string _M33DemoToken = "696c42d819642885724b60ffcb7d636deadd632e";
-        static string _M33ProdToken = "d579620ffba756e5c2ec9f76e3447f98bf85770b";
+        static string _M33DemoToken = ConfigurationManager.AppSettings.Get("M33_DemoToken");
+        static string _M33ProdToken = ConfigurationManager.AppSettings.Get("M33_ProdToken");
 
         static bool _M33DemoMode = false;
 
         static string _TransPlaceDemoUrl = "https://uattms.transplace.com/xml-api/api/";
         static string _TransPlaceProdUrl = "https://tms.transplace.com/xml-api/api/";
 
-        static string _TransPlaceDemoToken = "8Hhk8etqxs94gEtj0JpVxl90qoINDfMAiemh84XbGNM%3D";
-        //static string _TransPlaceProdToken = "jLDnfupyBDGy%2FnF2zYs4g5Zl0%2B7g7TBLPIwBuNfAVhc%3D";
-        //static string _TransPlaceProdToken = "jLDnfupyBDGy%2FnF2zYs4gxMB78GTlIAytU2dzN4xQLdVWNGGmkNOl%2B9N%2BU6aO4vP";
-        static string _TransPlaceProdToken = "5-uLjricmzgb6N66P6PC9uUveqSx9dkDns031KSlSVBl2GrAl-5JVOgGMG72-2Lu";
+        static string _TransPlaceDemoToken = ConfigurationManager.AppSettings.Get("TransPlace_DemoToken");
+        static string _TransPlaceProdToken = ConfigurationManager.AppSettings.Get("TransPlace_ProdToken");
 
         // PRODUCTION
         static string _TransportationInsightDemoUrl = "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp";
         static string _TransportationInsightProdUrl = "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp";
-        static string _TransprtationInsightApiUsername = "WiseWS";
-        static string _TransprtationInsightApiPassword = "DwWfTbgjHF9fTFQeL8";
+        static string _TransprtationInsightApiUsername = ConfigurationManager.AppSettings.Get("TI_ApiUsername");
+        static string _TransprtationInsightApiPassword = ConfigurationManager.AppSettings.Get("TI_ApiPassword");
 
         // DEFVELOPMENT - restore these (and use them from the demo/test path) once WBF has real
         // TransportationInsight test credentials; today _TransportationInsightDemoUrl above is
         // identical to the prod URL, so a Test Call authenticates with prod credentials regardless.
         //static string _TransportationInsightDemoUrl = "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp";
-        //static string _TransprtationInsightApiUsername = "WiseWSTest"; // Development
-        //static string _TransprtationInsightApiPassword = "cRfx2PBt8SEAZFwjK3"; // Development
         #endregion
 
         static Config() {
@@ -121,6 +117,14 @@ namespace FreightEstApp35
             if (_Resolution.IsRefused)
             {
                 Console.Error.WriteLine("REFUSING TO START: " + _Resolution.Refusal);
+                Environment.Exit(2);
+            }
+
+            IReadOnlyList<string> missingSecrets = SecretSettings.FindMissing(ConfigurationManager.AppSettings.Get);
+            if (missingSecrets.Count > 0)
+            {
+                Console.Error.WriteLine("REFUSING TO START: missing required secret setting(s): " + string.Join(", ", missingSecrets)
+                    + ". Set them in secrets.config beside the exe or in the deployed config (see secrets.config.example).");
                 Environment.Exit(2);
             }
 
