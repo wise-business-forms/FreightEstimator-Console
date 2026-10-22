@@ -26,7 +26,10 @@ SANDBOX only has to match the structures this app actually touches, not the rest
 - **`CostPlus.dbo.FreightRequests`**: every column the app reads or writes (103, including the numbered result slots) is identical to production. No change needed.
 - **`UpsRate.dbo.Plants`**: the five columns the app reads (`PlantCode`, `City`, `State`, `Zip`, `Country`) are identical. Production's extra columns (`GLCode`, `UpsShippingNumber`) and primary key are not used by the app and are not migrated.
 - **`UpsRate.dbo.CarrierApiCall` and `CarrierRateQuote`**: columns identical.
-- **`UpsRate.dbo.GetPlantCharges`** and **`UpsRate.dbo.VerifyAndCorrect_PO_ZipCode`**: **not yet compared.** The production login used for the inventory could not see stored procedures. Re-run `inventory.sql` on production `UpsRate` with a login that can see definitions, then compare. `VerifyAndCorrect_PO_ZipCode` is known to be missing on SANDBOX. Whatever tables or columns `GetPlantCharges` reads (for example `PlantCarrierCharges2017`, where production has an `Active` column SANDBOX lacks) are in scope only once its definition shows it uses them.
+- **`UpsRate.dbo.GetPlantCharges`**: production's version filters on `Active = 'Y'`, which needs `PlantCarrierCharges2017.Active`. SANDBOX had neither. `delta-UpsRate.sql` adds the column and production's procedure text.
+- **`UpsRate.dbo.VerifyAndCorrect_PO_ZipCode`**: missing on SANDBOX, along with the two tables it reads (`Lookup_ZipCodeTypes`, `Lookup_ZipCodeExceptions`). `delta-UpsRate.sql` creates all three, structure only.
+
+`delta-UpsRate.sql` is for review and is run by the owner against SANDBOX. It copies no data, so two behaviors depend on rows that SANDBOX does not have: `Active` starts `NULL` (so `GetPlantCharges` returns no rows until the rows are marked `'Y'`), and the zip lookup tables start empty (so the procedure answers `BAD_INPUT`, which the app ignores).
 
 ## 2. Access (the DBA runs it)
 
