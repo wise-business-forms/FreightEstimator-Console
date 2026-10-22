@@ -14,7 +14,7 @@ Test Mode (see `CONTEXT.md`) runs only against SANDBOX, so SANDBOX needs the sam
 | SANDBOX `CostPlus` | `sandbox-CostPlus.txt` |
 
 ```
-sqlcmd -S <server> -d <database> -E -y 0 -W -s "|" -i inventory.sql -o <saved-file>
+sqlcmd -S <server> -d <database> -E -y 0 -s "|" -i inventory.sql -o <saved-file>
 ```
 
 Hand the four files back. When diffing production against SANDBOX, ignore the `server` line at the top of each file (server name and capture time always differ). A delta migration script (schema only, no data, only objects the app references plus their dependencies) is generated from the diff and reviewed before it is applied to SANDBOX. After it is applied, re-running the inventory on SANDBOX and diffing against production should show no differences for those objects.
