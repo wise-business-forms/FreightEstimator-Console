@@ -6,7 +6,7 @@ using System.Data;
 using System.Xml.Linq;
 using System.IO;
 using System.Net;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace FreightEstApp35
 {

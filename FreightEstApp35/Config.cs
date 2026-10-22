@@ -17,9 +17,9 @@ namespace FreightEstApp35
 
         #region Environment specific settings
         [Obsolete]
-        static string _PROD_ConnString = "Server=" + ConfigurationSettings.AppSettings.Get("PROD_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationSettings.AppSettings.Get("PROD_User") + ";pwd=" + ConfigurationSettings.AppSettings.Get("PROD_Password") + "; Connection Timeout=300;"; // PRODUCTION
+        static string _PROD_ConnString = "Server=" + ConfigurationSettings.AppSettings.Get("PROD_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationSettings.AppSettings.Get("PROD_User") + ";pwd=" + ConfigurationSettings.AppSettings.Get("PROD_Password") + "; Connection Timeout=300;Encrypt=False;TrustServerCertificate=True;"; // PRODUCTION
         [Obsolete]
-        static string _TEST_ConnString = "Server=" + ConfigurationSettings.AppSettings.Get("TEST_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationSettings.AppSettings.Get("TEST_User") + ";pwd=" + ConfigurationSettings.AppSettings.Get("TEST_Password") + "; Connection Timeout=300;"; // TEST
+        static string _TEST_ConnString = "Server=" + ConfigurationSettings.AppSettings.Get("TEST_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationSettings.AppSettings.Get("TEST_User") + ";pwd=" + ConfigurationSettings.AppSettings.Get("TEST_Password") + "; Connection Timeout=300;Encrypt=False;TrustServerCertificate=True;"; // TEST
 
         static string _PROD_SQLProviderAbbriviations = "SELECT FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations";
         static string _TEST_SQLProviderAbbriviations = "SELECT FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations";
