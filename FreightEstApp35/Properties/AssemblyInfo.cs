@@ -34,3 +34,7 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+
+// Lets the Carrier Test Harness build Shipment/UpsComm requests directly instead of widening
+// these types' visibility for every consumer of this assembly.
+[assembly: InternalsVisibleTo("CarrierTestHarness")]

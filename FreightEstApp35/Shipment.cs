@@ -64,6 +64,8 @@ namespace FreightEstApp35
         public ShopRateResponse shopLessThanTruckloadResponse { get; set; }
 
         // Logging
+        public string CorrelationId { get; set; }
+        public bool IsTest { get; set; }
         public string requestMessage { get; set; }
         public string responseMessage { get; set; }
         public string results { get; set; }

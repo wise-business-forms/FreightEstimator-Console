@@ -1,0 +1,152 @@
+{
+    "correlationId":  "parity-net48-ltl-accessorials-20261022133123",
+    "processingError":  null,
+    "upsRates":  [
+
+                 ],
+    "ltlRates":  [
+                     {
+                         "basicProvider":  "UPS",
+                         "basicMethod":  "UPSGroundFreight",
+                         "basicRate":  2844.63,
+                         "totalCharges":  2844.63,
+                         "plantCode":  "BUT",
+                         "note":  null
+                     },
+                     {
+                         "basicProvider":  "LTL",
+                         "basicMethod":  "TFORCE FREIGHT",
+                         "basicRate":  416.88,
+                         "totalCharges":  0.0,
+                         "plantCode":  "BUT",
+                         "note":  "LTL"
+                     },
+                     {
+                         "basicProvider":  "LTL",
+                         "basicMethod":  "XPO LOGISTICS FREIGHT INC. (LTL)",
+                         "basicRate":  483.93,
+                         "totalCharges":  0.0,
+                         "plantCode":  "BUT",
+                         "note":  "LTL"
+                     },
+                     {
+                         "basicProvider":  "LTL",
+                         "basicMethod":  "R \u0026 L CARRIERS INC.",
+                         "basicRate":  508.63,
+                         "totalCharges":  0.0,
+                         "plantCode":  "BUT",
+                         "note":  "LTL"
+                     },
+                     {
+                         "basicProvider":  "LTL",
+                         "basicMethod":  "ESTES EXPRESS LINES",
+                         "basicRate":  737.82,
+                         "totalCharges":  0.0,
+                         "plantCode":  "BUT",
+                         "note":  "LTL"
+                     }
+                 ],
+    "loggedCalls":  [
+                        {
+                            "Id":  17,
+                            "ApiProvider":  "UPS",
+                            "ShippingMode":  "Parcel",
+                            "Operation":  "Rate",
+                            "PlantCode":  "BUT",
+                            "IsSuccess":  true,
+                            "IsTest":  true,
+                            "HttpStatusCode":  200,
+                            "ErrorMessage":  null,
+                            "DurationMs":  3482,
+                            "RequestUrl":  "https://onlinetools.ups.com/api/rating/v2403/Rate",
+                            "Quotes":  [
+                                           {
+                                               "CarrierName":  "UPS",
+                                               "ServiceLevel":  "UPSGroundFreight",
+                                               "BaseCost":  2844.63,
+                                               "MarkupPercent":  null,
+                                               "PerPackageCharge":  null,
+                                               "PerShipmentCharge":  null,
+                                               "TotalCharge":  2844.63,
+                                               "Currency":  "USD",
+                                               "TransitDays":  null
+                                           }
+                                       ]
+                        },
+                        {
+                            "Id":  18,
+                            "ApiProvider":  "TransPlace",
+                            "ShippingMode":  "LTL",
+                            "Operation":  "Quote",
+                            "PlantCode":  "BUT",
+                            "IsSuccess":  false,
+                            "IsTest":  true,
+                            "HttpStatusCode":  404,
+                            "ErrorMessage":  "The remote server returned an error: (404) Not Found.",
+                            "DurationMs":  261,
+                            "RequestUrl":  "https://uattms.transplace.com/xml-api/api/rate/quote?loginToken=<redacted>",
+                            "Quotes":  [
+
+                                       ]
+                        },
+                        {
+                            "Id":  19,
+                            "ApiProvider":  "TransportationInsight",
+                            "ShippingMode":  "LTL",
+                            "Operation":  "Quote",
+                            "PlantCode":  "BUT",
+                            "IsSuccess":  true,
+                            "IsTest":  true,
+                            "HttpStatusCode":  200,
+                            "ErrorMessage":  null,
+                            "DurationMs":  3792,
+                            "RequestUrl":  "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp",
+                            "Quotes":  [
+                                           {
+                                               "CarrierName":  "TFORCE FREIGHT",
+                                               "ServiceLevel":  null,
+                                               "BaseCost":  416.88,
+                                               "MarkupPercent":  0.0000,
+                                               "PerPackageCharge":  0.00,
+                                               "PerShipmentCharge":  0.00,
+                                               "TotalCharge":  416.88,
+                                               "Currency":  "USD",
+                                               "TransitDays":  null
+                                           },
+                                           {
+                                               "CarrierName":  "XPO LOGISTICS FREIGHT INC. (LTL)",
+                                               "ServiceLevel":  null,
+                                               "BaseCost":  483.93,
+                                               "MarkupPercent":  0.0000,
+                                               "PerPackageCharge":  0.00,
+                                               "PerShipmentCharge":  0.00,
+                                               "TotalCharge":  483.93,
+                                               "Currency":  "USD",
+                                               "TransitDays":  null
+                                           },
+                                           {
+                                               "CarrierName":  "R \u0026 L CARRIERS INC.",
+                                               "ServiceLevel":  null,
+                                               "BaseCost":  508.63,
+                                               "MarkupPercent":  0.0000,
+                                               "PerPackageCharge":  0.00,
+                                               "PerShipmentCharge":  0.00,
+                                               "TotalCharge":  508.63,
+                                               "Currency":  "USD",
+                                               "TransitDays":  null
+                                           },
+                                           {
+                                               "CarrierName":  "ESTES EXPRESS LINES",
+                                               "ServiceLevel":  null,
+                                               "BaseCost":  737.82,
+                                               "MarkupPercent":  0.0000,
+                                               "PerPackageCharge":  0.00,
+                                               "PerShipmentCharge":  0.00,
+                                               "TotalCharge":  737.82,
+                                               "Currency":  "USD",
+                                               "TransitDays":  null
+                                           }
+                                       ]
+                        }
+                    ]
+}

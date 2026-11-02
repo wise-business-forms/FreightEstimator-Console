@@ -8,53 +8,36 @@ namespace FreightEstApp35
 {
     public static class Config
     {
-        // Toggleing between Prod and Test is based on host machine name.
-        static string HOST_PRODUCTION_WEB = "SUWWEB05"; // If this is the host name it will run production settings.
-        static string _ENVIRONMENT = String.Empty;
         [Obsolete]
-        static string _RemoteServerName = ConfigurationSettings.AppSettings.Get("RemoteServerName");
+        static string _RemoteServerName = ConfigurationManager.AppSettings.Get("RemoteServerName");
         static string _LogFile = "FreightEstApp35.log";
 
         #region Environment specific settings
-        [Obsolete]
-        static string _PROD_ConnString = "Server=" + ConfigurationSettings.AppSettings.Get("PROD_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationSettings.AppSettings.Get("PROD_User") + ";pwd=" + ConfigurationSettings.AppSettings.Get("PROD_Password") + "; Connection Timeout=300;"; // PRODUCTION
-        [Obsolete]
-        static string _TEST_ConnString = "Server=" + ConfigurationSettings.AppSettings.Get("TEST_Server") + "; Initial Catalog=UpsRate;uid=" + ConfigurationSettings.AppSettings.Get("TEST_User") + ";pwd=" + ConfigurationSettings.AppSettings.Get("TEST_Password") + "; Connection Timeout=300;"; // TEST
 
         static string _PROD_SQLProviderAbbriviations = "SELECT FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations";
-        static string _TEST_SQLProviderAbbriviations = "SELECT FreightAbbreviation FROM " + Config.RemoteServerName + ".CostPlus.dbo.FreightProviderAbbreviations";
 
-        // UPS PRODUCTION ENDPOINTS
-        static string _PROD_UPSAuthorizationURL = "https://onlinetools.ups.com/security/v1/oauth/authorize"; // PRODUCTION
-        static string _PROD_UPSGenerateTokenURL = "https://onlinetools.ups.com/security/v1/oauth/token"; // PRODUCTION
-        static string _PROD_UPSAddressValidationURL = "https://onlinetools.ups.com/api/addressvalidation/v1/3"; //  PRODUCTION  {version}/{requestOption}
-        static string _PROD_UPSShopRatesURL = "https://onlinetools.ups.com/api/rating/v2403/"; // PRODUCTION {version}/{requestoption}        
+        // UPS endpoints. UPS has no usable sandbox for the REST Rating API, so Test Calls use these too (ADR 0002).
+        static string _UPSAuthorizationURL = "https://onlinetools.ups.com/security/v1/oauth/authorize";
+        static string _UPSGenerateTokenURL = "https://onlinetools.ups.com/security/v1/oauth/token";
+        static string _UPSAddressValidationURL = "https://onlinetools.ups.com/api/addressvalidation/v1/3"; // {version}/{requestOption}
+        static string _UPSShopRatesURL = "https://onlinetools.ups.com/api/rating/v2403/"; // {version}/{requestoption}
 
-        // UPS TEST ENDPOINTS
-        static string _TEST_UPSAuthorizationURL = "https://onlinetools.ups.com/security/v1/oauth/authorize"; // PRODUCTION
-        static string _TEST_UPSGenerateTokenURL = "https://onlinetools.ups.com/security/v1/oauth/token"; // PRODUCTION
-        static string _TEST_UPSAddressValidationURL = "https://onlinetools.ups.com/api/addressvalidation/v1/3"; //  PRODUCTION  {version}/{requestOption}
-        static string _TEST_UPSShopRatesURL = "https://onlinetools.ups.com/api/rating/v2403/"; // PRODUCTION {version}/{requestoption}    
-        
-        // UPS OFFICIAL ENDPOINTS
+        // UPS certification (non-production) endpoints, unusable for the REST Rating API (ADR 0002)
         //static string _TEST_UPSAuthorizationURL = "https://wwwcie.ups.com/security/v1/oauth/authorize"; // TEST
         //static string _TEST_UPSGenerateTokenURL = "https://wwwcie.ups.com/security/v1/oauth/token"; // TEST
         //static string _TEST_UPSAddressValidationURL = "https://wwwcie.ups.com/api/addressvalidation/v1/3"; // TEST  {version}/{requestOption}
         //static string _TEST_UPSShopRatesURL = "https://wwwcie.ups.com/api/rating/v2403/"; // TEST {version}/{requestoption}        
         #endregion
 
-        static string _UPSAccessKey = "CC83ED82D080DC80";
-        static string _UPSUserName = "WiseWebSupport";
-        static string _UPSPassword = "Wise_forms";
-        static string _UPSClientId = "SzWbVRiGAPPbC0NqV9GGXdE8kUE0EnexGrxsl94sj0HGTdAX";
-        static string _UPSClientSecret = "zcnbBCf3qPGLleJv1aBqOH8SbAbFssLoE1vAAUGbrnXK2GJAQJUTAskarDv70Ddw";
+        static string _UPSAccessKey = ConfigurationManager.AppSettings.Get("UPS_AccessKey");
+        static string _UPSUserName = ConfigurationManager.AppSettings.Get("UPS_UserName");
+        static string _UPSPassword = ConfigurationManager.AppSettings.Get("UPS_Password");
+        static string _UPSClientId = ConfigurationManager.AppSettings.Get("UPS_ClientId");
+        static string _UPSClientSecret = ConfigurationManager.AppSettings.Get("UPS_ClientSecret");
 
         static string _SQLProviderAbbriviations = String.Empty;
         static string _ConnString = String.Empty;
-        static string _UPSAuthorizationURL = String.Empty;
-        static string _UPSGenerateTokenURL = String.Empty;
-        static string _UPSAddressValidationURL = String.Empty;
-        static string _UPSShopRatesURL = String.Empty;
+        static EnvironmentResolution _Resolution;
         static string _UPSShipFromName = "Wise Alpharetta";
         static string _UPSShipFromAddress = "1000 Union Center Drive";
         static string _UPSShipFromCity = "Alpharetta";
@@ -91,33 +74,27 @@ namespace FreightEstApp35
         static string _M33DemoUrl = "http://demo.m33integrated.com/api/";
         static string _M33ProdUrl = "https://blackbeardapp.com/api/";
 
-        static string _M33DemoToken = "696c42d819642885724b60ffcb7d636deadd632e";
-        static string _M33ProdToken = "d579620ffba756e5c2ec9f76e3447f98bf85770b";
+        static string _M33DemoToken = ConfigurationManager.AppSettings.Get("M33_DemoToken");
+        static string _M33ProdToken = ConfigurationManager.AppSettings.Get("M33_ProdToken");
 
         static bool _M33DemoMode = false;
 
         static string _TransPlaceDemoUrl = "https://uattms.transplace.com/xml-api/api/";
         static string _TransPlaceProdUrl = "https://tms.transplace.com/xml-api/api/";
 
-        static string _TransPlaceDemoToken = "8Hhk8etqxs94gEtj0JpVxl90qoINDfMAiemh84XbGNM%3D";
-        //static string _TransPlaceProdToken = "jLDnfupyBDGy%2FnF2zYs4g5Zl0%2B7g7TBLPIwBuNfAVhc%3D";
-        //static string _TransPlaceProdToken = "jLDnfupyBDGy%2FnF2zYs4gxMB78GTlIAytU2dzN4xQLdVWNGGmkNOl%2B9N%2BU6aO4vP";
-        static string _TransPlaceProdToken = "5-uLjricmzgb6N66P6PC9uUveqSx9dkDns031KSlSVBl2GrAl-5JVOgGMG72-2Lu";
-
-        static bool _TransPlaceDemoMode = false;
+        static string _TransPlaceDemoToken = ConfigurationManager.AppSettings.Get("TransPlace_DemoToken");
+        static string _TransPlaceProdToken = ConfigurationManager.AppSettings.Get("TransPlace_ProdToken");
 
         // PRODUCTION
         static string _TransportationInsightDemoUrl = "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp";
         static string _TransportationInsightProdUrl = "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp";
-        static string _TransprtationInsightApiUsername = "WiseWS";
-        static string _TransprtationInsightApiPassword = "DwWfTbgjHF9fTFQeL8";
-        static bool _TransprtationInsightDemoMode = false;
+        static string _TransprtationInsightApiUsername = ConfigurationManager.AppSettings.Get("TI_ApiUsername");
+        static string _TransprtationInsightApiPassword = ConfigurationManager.AppSettings.Get("TI_ApiPassword");
 
-        // DEFVELOPMENT
+        // DEFVELOPMENT - restore these (and use them from the demo/test path) once WBF has real
+        // TransportationInsight test credentials; today _TransportationInsightDemoUrl above is
+        // identical to the prod URL, so a Test Call authenticates with prod credentials regardless.
         //static string _TransportationInsightDemoUrl = "https://t-insightws.mercurygate.net/MercuryGate/common/remoteService.jsp";
-        //static string _TransprtationInsightApiUsername = "WiseWSTest"; // Development
-        //static string _TransprtationInsightApiPassword = "cRfx2PBt8SEAZFwjK3"; // Development
-        //static bool _TransprtationInsightDemoMode = true;
         #endregion
 
         static Config() {
@@ -125,50 +102,45 @@ namespace FreightEstApp35
         }
 
         /// <summary>
-        /// Manages the DEBUG / PRODUCTION toggle based on host server name.
-        /// If the host name is unknown it will default to DEBUG.
+        /// Classifies this run as a Production Host or Test Mode from the machine name and the configured
+        /// ProductionHosts list, then sets the connection string and request-queue query. If the configured
+        /// servers do not fit the mode, prints why and exits before any connection is opened.
         /// </summary>
-        public static void SetProdDebug()
+        public static void ResolveEnvironment()
         {
-            string hostServerName = Environment.MachineName;
-            //if(hostServerName == HOST_PRODUCTION_WEB)
-            {
-                _ENVIRONMENT = "PRODUCTION";
-                _UPSAuthorizationURL = _PROD_UPSAuthorizationURL;
-                _UPSGenerateTokenURL = _PROD_UPSGenerateTokenURL;
-                _UPSAddressValidationURL = _PROD_UPSAddressValidationURL;
-                _UPSShopRatesURL = _PROD_UPSShopRatesURL;
-                _ConnString = _PROD_ConnString;
-                _SQLProviderAbbriviations = _PROD_SQLProviderAbbriviations;
-            }
-            //else
-            //{
-            //    _ENVIRONMENT = "DEBUG";
-            //    _UPSAuthorizationURL = _TEST_UPSAuthorizationURL;
-            //    _UPSGenerateTokenURL = _TEST_UPSGenerateTokenURL;
-            //    _UPSAddressValidationURL = _TEST_UPSAddressValidationURL;
-            //    _UPSShopRatesURL = _TEST_UPSShopRatesURL;
-            //    _ConnString = _TEST_ConnString;
-            //    _SQLProviderAbbriviations = _TEST_SQLProviderAbbriviations;
-            //}
+            _Resolution = EnvironmentEvaluator.Evaluate(
+                Environment.MachineName,
+                EnvironmentEvaluator.ParseHostList(ConfigurationManager.AppSettings.Get("ProductionHosts")),
+                ConfigurationManager.AppSettings.Get("PROD_Server"),
+                _RemoteServerName);
 
-            Console.WriteLine("Environment: " + _ENVIRONMENT);
-            Console.WriteLine("UPSAuthorizationURL: " + _UPSAuthorizationURL);
-            Console.WriteLine("UPSGenerateTokenURL: " + _UPSGenerateTokenURL);
-            Console.WriteLine("UPSAddressValidationURL: " + _UPSAddressValidationURL);
-            Console.WriteLine("UPSShopRatesURL: " + _UPSShopRatesURL);
-            Console.WriteLine("ConnString: " + _ConnString);
-            Console.WriteLine("SQLProviderAbbriviations: " + _SQLProviderAbbriviations);
+            if (_Resolution.IsRefused)
+            {
+                Console.Error.WriteLine("REFUSING TO START: " + _Resolution.Refusal);
+                Environment.Exit(2);
+            }
+
+            IReadOnlyList<string> missingSecrets = SecretSettings.FindMissing(ConfigurationManager.AppSettings.Get, _Resolution.Mode);
+            if (missingSecrets.Count > 0)
+            {
+                Console.Error.WriteLine("REFUSING TO START: missing required secret setting(s): " + string.Join(", ", missingSecrets)
+                    + ". Set them in secrets.config beside the exe or in the deployed config (see secrets.config.example).");
+                Environment.Exit(2);
+            }
+
+            _ConnString = ConnectionStrings.Build(
+                _Resolution.Mode,
+                ConfigurationManager.AppSettings.Get("PROD_Server"),
+                ConfigurationManager.AppSettings.Get("PROD_User"),
+                ConfigurationManager.AppSettings.Get("PROD_Password"));
+            _SQLProviderAbbriviations = _PROD_SQLProviderAbbriviations;
         }
 
-
-        public static string ENVIRONMENT
+        public static EnvironmentResolution Resolution
         {
-            get
-            {
-                return _ENVIRONMENT;
-            }
+            get { return _Resolution; }
         }
+
         public static string ConnString
         {
             get { return _ConnString; }
@@ -307,49 +279,14 @@ namespace FreightEstApp35
         }
 
 
-        public static string TransPlaceUrl
-        {
-            get
-            {
-                if (_TransPlaceDemoMode)
-                {
-                    return _TransPlaceDemoUrl;
-                }
-                else
-                {
-                    return _TransPlaceProdUrl;
-                }
-            }
-        }
-        public static string TransPlaceToken
-        {
-            get
-            {
-                if (_TransPlaceDemoMode)
-                {
-                    return _TransPlaceDemoToken;
-                }
-                else
-                {
-                    return _TransPlaceProdToken;
-                }
-            }
-        }
-
-        public static string TransportationInsightUrl
-        {
-            get
-            {
-                if (_TransprtationInsightDemoMode)
-                {
-                    return _TransportationInsightDemoUrl;
-                }
-                else
-                {
-                    return _TransportationInsightProdUrl;
-                }
-            }
-        }
+        // Raw prod/demo values - which one to use for a given call is a per-request decision
+        // (see CarrierTestRouting), not a static app-wide toggle.
+        // Url and Token always travel together for a given environment, so they're bundled
+        // into one value rather than four separate properties a caller has to re-pair.
+        public static (string Url, string Token) TransPlaceProdEndpoint { get { return (_TransPlaceProdUrl, _TransPlaceProdToken); } }
+        public static (string Url, string Token) TransPlaceDemoEndpoint { get { return (_TransPlaceDemoUrl, _TransPlaceDemoToken); } }
+        public static string TransportationInsightProdUrl { get { return _TransportationInsightProdUrl; } }
+        public static string TransportationInsightDemoUrl { get { return _TransportationInsightDemoUrl; } }
 
         public static string TransprtationInsightApiUsername
         {

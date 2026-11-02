@@ -18,7 +18,14 @@ namespace FreightEstApp35
         private string _url = string.Empty;
         private UPSService[] _uPSServices = null;
         private Shipment _shipment = null;
+        private RequestOption _requestOption;
         public enum RequestOption { Rate, Shop, Ratetimeintransit, Shoptimeintransit };
+
+        /// <summary>
+        /// Id of the CarrierApiCall row logged for the most recent Response() call, so callers
+        /// that later parse UPSServices can attach CarrierRateQuote rows to the same call.
+        /// </summary>
+        public long LastCarrierApiCallId { get; private set; }
 
         public UPSRequest() { }
         /// <summary>
@@ -32,6 +39,7 @@ namespace FreightEstApp35
             _request = RateRequest(shipment, new Plant(plant.Id), requestOption);
             _url = Config.UPSShopRatesURL + requestOption.ToString();
             _shipment = shipment;
+            _requestOption = requestOption;
         }
 
         /// <summary>
@@ -43,6 +51,12 @@ namespace FreightEstApp35
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + GetToken());
+
+                DateTime requestedAtUtc = DateTime.UtcNow;
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                int? statusCode = null;
+                bool success = false;
+                string errorMessage = null;
 
                 try
                 {
@@ -60,36 +74,70 @@ namespace FreightEstApp35
                     // Get the response
                     using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                     {
+                        statusCode = (int)response.StatusCode;
                         if (response.StatusCode == HttpStatusCode.OK)
                         {
                             using (var streamReader = new StreamReader(response.GetResponseStream()))
                             {
                                 _response = streamReader.ReadToEnd();
                             }
+                            success = true;
                         }
                         else
                         {
-                            Console.WriteLine($"Error: {response.StatusCode} - {response.StatusDescription}");
+                            errorMessage = $"{response.StatusCode} - {response.StatusDescription}";
+                            Console.WriteLine($"Error: {errorMessage}");
                         }
                     }
-                    Log.LogRequest_Rate("console", _shipment.Address, _shipment.City, _shipment.State_selection, _shipment.Zip, _shipment.Country_selection, _request, _response, "");
                 }
                 catch (WebException ex)
                 {
                     using (var errorResponse = (HttpWebResponse)ex.Response)
                     {
-                        using (var reader = new StreamReader(errorResponse.GetResponseStream()))
+                        if (errorResponse != null)
                         {
-                            string error = reader.ReadToEnd();
-                            _response = error;
-                            Log.LogRequest_Rate("console-error", _shipment.Address, _shipment.City, _shipment.State_selection, _shipment.Zip, _shipment.Country_selection, _request, _response, "");
+                            statusCode = (int)errorResponse.StatusCode;
+                            using (var reader = new StreamReader(errorResponse.GetResponseStream()))
+                            {
+                                _response = reader.ReadToEnd();
+                            }
                         }
+                        errorMessage = ex.Message;
                     }
                 }
                 catch (Exception ex)
                 {
-                Log.LogRequest_Rate("console-error", _shipment.Address, _shipment.City, _shipment.State_selection, _shipment.Zip, _shipment.Country_selection, _request, ex.Message.ToString(), "");
-            }
+                    errorMessage = ex.Message;
+                    _response = ex.Message;
+                }
+                finally
+                {
+                    stopwatch.Stop();
+                    LastCarrierApiCallId = CarrierApiLogger.LogApiCall(new CarrierApiCall
+                    {
+                        CorrelationId = _shipment.CorrelationId,
+                        IsTest = _shipment.IsTest,
+                        ApiProvider = "UPS",
+                        ShippingMode = "Parcel",
+                        Operation = _requestOption.ToString(),
+                        PlantCode = _shipment.PlantId,
+                        AccountNumber = _shipment.AcctNum,
+                        ShipToAddress = _shipment.Address,
+                        ShipToCity = _shipment.City,
+                        ShipToState = _shipment.State_selection,
+                        ShipToZip = _shipment.Zip,
+                        ShipToCountry = _shipment.Country_selection,
+                        RequestUrl = _url,
+                        HttpStatusCode = statusCode,
+                        IsSuccess = success,
+                        ErrorMessage = errorMessage,
+                        RequestBody = _request,
+                        ResponseBody = _response,
+                        RequestedAtUtc = requestedAtUtc,
+                        RespondedAtUtc = DateTime.UtcNow,
+                        DurationMs = (int)stopwatch.ElapsedMilliseconds
+                    });
+                }
 
                 return _response;
             }
@@ -201,7 +249,28 @@ namespace FreightEstApp35
             }
             catch (Exception ex)
             {
-                Log.LogRequest_Rate("", _shipment.Address, _shipment.City, _shipment.State_selection, _shipment.Zip, _shipment.Country_selection, _request, ex.Message, "");
+                CarrierApiLogger.LogApiCall(new CarrierApiCall
+                {
+                    CorrelationId = _shipment.CorrelationId,
+                    IsTest = _shipment.IsTest,
+                    ApiProvider = "UPS",
+                    ShippingMode = "Parcel",
+                    Operation = _requestOption + "-ParseError",
+                    PlantCode = _shipment.PlantId,
+                    AccountNumber = _shipment.AcctNum,
+                    ShipToAddress = _shipment.Address,
+                    ShipToCity = _shipment.City,
+                    ShipToState = _shipment.State_selection,
+                    ShipToZip = _shipment.Zip,
+                    ShipToCountry = _shipment.Country_selection,
+                    RequestUrl = _url,
+                    IsSuccess = false,
+                    ErrorMessage = ex.Message,
+                    RequestBody = _request,
+                    ResponseBody = _response,
+                    RequestedAtUtc = DateTime.UtcNow,
+                    RespondedAtUtc = DateTime.UtcNow
+                });
             }
             return _uPSServices;
         }
@@ -212,12 +281,10 @@ namespace FreightEstApp35
 
         public string GetToken()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-
             string req = "grant_type=client_credentials";
             byte[] data = Encoding.ASCII.GetBytes(req);
             var accessID = Config.UPSClientId + ":" + Config.UPSClientSecret;
-            var base64 = Convert.ToBase64String(Encoding.Default.GetBytes(accessID));
+            var base64 = Convert.ToBase64String(Encoding.ASCII.GetBytes(accessID));
             string sResponse = "";
             string sToken = "";
             string url = Config.UPSGenerateTokenURL;

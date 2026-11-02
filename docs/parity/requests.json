@@ -1,0 +1,67 @@
+[
+  {
+    "name": "parcel-single",
+    "note": "One light package, UPS parcel only.",
+    "body": {
+      "toAddress": { "street": "100 Parity Test Ln", "city": "Springfield", "state": "IL", "zip": "62701", "country": "US" },
+      "requestUPS": true, "requestLTL": false,
+      "fromPlant": "ALP", "numPackages": 1, "pkgWeight": 10, "lastPkgWeight": 0
+    }
+  },
+  {
+    "name": "parcel-multi",
+    "note": "Several packages with a different last-package weight.",
+    "body": {
+      "toAddress": { "street": "200 Parity Test Ave", "city": "Dallas", "state": "TX", "zip": "75201", "country": "US" },
+      "requestUPS": true, "requestLTL": false,
+      "fromPlant": "FTW", "numPackages": 5, "pkgWeight": 40, "lastPkgWeight": 25
+    }
+  },
+  {
+    "name": "parcel-residential",
+    "note": "Residential delivery accessorial, west coast.",
+    "body": {
+      "toAddress": { "street": "300 Parity Test Ct", "city": "Portland", "state": "OR", "zip": "97201", "country": "US" },
+      "requestUPS": true, "requestLTL": false,
+      "fromPlant": "POR", "numPackages": 2, "pkgWeight": 15, "lastPkgWeight": 0,
+      "accessorials": "RESIDENTIAL-DELIVERY;"
+    }
+  },
+  {
+    "name": "ltl-heavy",
+    "note": "LTL only (UPS ground freight + TransPlace + TransportationInsight), class 55.",
+    "body": {
+      "toAddress": { "street": "400 Parity Test Blvd", "city": "Atlanta", "state": "GA", "zip": "30303", "country": "US" },
+      "requestUPS": false, "requestLTL": true,
+      "fromPlant": "ALP", "freightClass": "55", "numPackages": 4, "pkgWeight": 300, "lastPkgWeight": 0
+    }
+  },
+  {
+    "name": "ltl-accessorials",
+    "note": "LTL with liftgate and inside delivery, class 70.",
+    "body": {
+      "toAddress": { "street": "500 Parity Test Way", "city": "Denver", "state": "CO", "zip": "80202", "country": "US" },
+      "requestUPS": false, "requestLTL": true,
+      "fromPlant": "BUT", "freightClass": "70", "numPackages": 6, "pkgWeight": 150, "lastPkgWeight": 0,
+      "accessorials": "LIFTGATE-DELIVERY;INSIDE-DELIVERY;"
+    }
+  },
+  {
+    "name": "both-modes",
+    "note": "UPS and LTL in one request, so sibling calls share a CorrelationId.",
+    "body": {
+      "toAddress": { "street": "600 Parity Test Dr", "city": "Columbus", "state": "OH", "zip": "43215", "country": "US" },
+      "requestUPS": true, "requestLTL": true,
+      "fromPlant": "ALP", "freightClass": "55", "numPackages": 3, "pkgWeight": 60, "lastPkgWeight": 0
+    }
+  },
+  {
+    "name": "invalid-address",
+    "note": "Error path: nonexistent address. The responses (including logged errors) must still match.",
+    "body": {
+      "toAddress": { "street": "0 Nowhere Rd", "city": "Faketown", "state": "ZZ", "zip": "00000", "country": "US" },
+      "requestUPS": true, "requestLTL": false,
+      "fromPlant": "ALP", "numPackages": 1, "pkgWeight": 10, "lastPkgWeight": 0
+    }
+  }
+]
